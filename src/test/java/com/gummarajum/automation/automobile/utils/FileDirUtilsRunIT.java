@@ -25,14 +25,12 @@ public class FileDirUtilsRunIT {
         TestConfig.configureLogging(AppiumServerUtilsRunIT.class);
     }
 
-    @Ignore
     @Test
     public void testGetFileFromResources_testResources() {
         File file = fileDirUtils.getFileFromResources("capabilities/android.json");
         Assert.assertTrue(file.getAbsolutePath().contains("target/test-classes/capabilities/android.json"));
     }
 
-    @Ignore
     @Test
     public void testGetFileFromResources_mainResources() {
         File file = fileDirUtils.getFileFromResources("log4j.xml");

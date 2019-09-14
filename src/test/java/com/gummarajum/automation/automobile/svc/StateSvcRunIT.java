@@ -24,14 +24,12 @@ public class StateSvcRunIT {
         TestConfig.configureLogging(StateSvcRunIT.class);
     }
 
-    @Ignore
     @Test
     public void testSetStringVar() {
         stateSvc.setStringVar("var", "value");
         Assert.assertEquals("value", stateSvc.getStringVar("var"));
     }
 
-    @Ignore
     @Test
     public void testExpandVar() {
         stateSvc.setStringVar("var1", "value1");
