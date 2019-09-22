@@ -1,0 +1,8 @@
+{
+  "platformName": "Android",
+  "platformVersion": "9.0",
+  "deviceName": "Samsung S9+",
+  "udid": "ce06171644d1b0e20d",
+  "appPackage": "com.samsung.android.contacts",
+  "appActivity": "com.samsung.android.contacts.contactslist.PeopleActivity"
+}

@@ -6,11 +6,7 @@ import com.gummarajum.automation.automobile.svc.MobileTaskSvc;
 import com.gummarajum.automation.automobile.svc.StateSvc;
 import com.gummarajum.automation.automobile.svc.ThreadSvc;
 import com.gummarajum.automation.automobile.utils.AdbUtils;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
-import io.appium.java_client.touch.offset.PointOption;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.html5.Location;
 import org.openqa.selenium.support.PageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 
-import static com.constants.SystemProperties.AWS_EXECUTION;
+import static com.constants.Properties.AWS_EXECUTION;
 
 @Lazy
 @Component
@@ -60,48 +56,48 @@ public class HomeScreen {
             mobileTaskSvc.clickIfVisible(homeScreenObjects.countrySelection, 10);
             mobileTaskSvc.clickIfVisible(homeScreenObjects.skipBtn, 10);
         }
-        mobileTaskSvc.isElementVisible(homeScreenObjects.searchView, 30);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.searchView, 30);
     }
 
 
     public void isScanVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.scanIcon);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.scanIcon);
     }
 
     public void isWalletVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.walletIcon);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.walletIcon);
     }
 
     public void isSearchViewVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.searchView);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.searchView);
     }
 
     public void isFeedVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.feedIcon);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.feedIcon);
     }
 
     public void isMessagesVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.messagesIcon);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.messagesIcon);
     }
 
     public void isCartVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.cartIcon);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.cartIcon);
     }
 
     public void isAccountVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.accountIcon);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.accountIcon);
     }
 
     public void isEasyLoginTipsVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.easyLoginText);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.easyLoginText);
     }
 
     public void isLoginNowVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.loginNowLink);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.loginNowLink);
     }
 
     public void isSearchInputVisible() {
-        mobileTaskSvc.isElementVisible(homeScreenObjects.searchInput);
+        mobileTaskSvc.verifyElementIsVisible(homeScreenObjects.searchInput);
     }
 
 

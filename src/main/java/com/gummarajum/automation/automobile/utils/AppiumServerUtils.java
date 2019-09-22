@@ -7,19 +7,23 @@ import io.appium.java_client.service.local.flags.GeneralServerFlag;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static com.constants.SystemProperties.APPIUM_LOG_LEVEL;
-import static com.constants.SystemProperties.APPIUM_SERVER_URL;
+import static com.constants.Properties.APPIUM_LOG_LEVEL;
+import static com.constants.Properties.APPIUM_SERVER_URL;
+import static com.constants.Properties.CHROME_DRIVER_PATH;
 
 @Component
 public class AppiumServerUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AppiumServerUtils.class);
 
+    @Autowired
+    private FileDirUtils fileDirUtils;
 
     private AppiumDriverLocalService service;
 
@@ -38,6 +42,9 @@ public class AppiumServerUtils {
                 url = new URL(System.getProperty(APPIUM_SERVER_URL));
                 LOGGER.debug("Appium Url Reading from System property [{}] => [{}]", APPIUM_SERVER_URL, url);
             } else {
+                if(getAppiumDriverService() == null){
+                    startServer();
+                }
                 url = getAppiumDriverService().getUrl();
                 LOGGER.debug("Appium is started locally on [{}]", url);
             }
@@ -48,6 +55,9 @@ public class AppiumServerUtils {
     }
 
     public boolean startServer() {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setCapability("chromedriverExecutable",
+                fileDirUtils.getFileFromResources(CHROME_DRIVER_PATH).getAbsolutePath());
 
         if (isAppiumUrlProvided()) {
             return true;
@@ -56,8 +66,10 @@ public class AppiumServerUtils {
         AppiumServiceBuilder builder = new AppiumServiceBuilder();
         builder.withIPAddress("127.0.0.1");
         builder.usingPort(4723);
+        builder.withCapabilities(capabilities);
         builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
         builder.withArgument(GeneralServerFlag.LOG_LEVEL, getAppiumLogLevel());
+
 
         service = AppiumDriverLocalService.buildService(builder);
         service.start();

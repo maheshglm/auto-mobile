@@ -2,8 +2,8 @@ package com.cfg;
 
 import com.google.common.base.Strings;
 
-import static com.constants.SystemProperties.FEATURES_PATH;
-import static com.constants.SystemProperties.REPORTS_PATH;
+import static com.constants.Properties.FEATURES_PATH;
+import static com.constants.Properties.REPORTS_PATH;
 
 public class CucumberConfig {
 

@@ -23,7 +23,7 @@ public class AppiumServerUtilsRunIT {
         TestConfig.configureLogging(AppiumServerUtilsRunIT.class);
     }
 
-    @Ignore
+    //@Ignore
     @Test
     public void testAppiumServer(){
         try {

@@ -1,0 +1,19 @@
+package com.constants;
+
+public enum UISELECTORS {
+
+    RESOURCE_ID,
+    XPATH,
+    CLASSNAME,
+    CLASSNAME_MATCHES,
+    TEXT,
+    TEXT_CONTAINS,
+    INDEX,
+    CLICKABLE,
+    CHECKED,
+    ENABLED,
+    DESCRIPTION,
+    DESCRIPTION_CONTAINS,
+    DESCRIPTION_MATCHES
+
+}

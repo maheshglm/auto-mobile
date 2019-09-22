@@ -9,8 +9,6 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
-import io.appium.java_client.service.local.AppiumDriverLocalService;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
@@ -18,13 +16,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.print.DocFlavor;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 
-import static com.constants.SystemProperties.*;
+import static com.constants.Properties.*;
 
 @Service
 public class MobileDriverSvc {
@@ -56,8 +51,8 @@ public class MobileDriverSvc {
     private FormatterUtils formatterUtils;
 
 
-    public String getMobilePlatform() {
-        String platform = System.getProperty(MOBILE_PLATFORM);
+    public String getCapabilitiesIdentifier() {
+        String platform = System.getProperty(CAPABILITIES_IDENTIFIER);
         if (Strings.isNullOrEmpty(platform)) {
             return ANDROID;
         }
@@ -67,9 +62,9 @@ public class MobileDriverSvc {
     private Map<String, Object> readDesiredCapabilitiesFromJson() {
         String filename;
         if (Strings.isNullOrEmpty(System.getProperty(CAPABILITIES_PATH))) {
-            filename = formatterUtils.format("capabilities/%s.json", getMobilePlatform());
+            filename = formatterUtils.format("capabilities/%s.json", getCapabilitiesIdentifier());
         } else {
-            filename = formatterUtils.format(System.getProperty(CAPABILITIES_PATH) + "/capabilities/%s.json", getMobilePlatform());
+            filename = formatterUtils.format(System.getProperty(CAPABILITIES_PATH) + "/capabilities/%s.json", getCapabilitiesIdentifier());
         }
         File filepath = fileDirUtils.getFileFromResources(filename);
         LOGGER.debug("Reading Desired capabilities from [{}]", filepath.getAbsolutePath());
@@ -107,13 +102,13 @@ public class MobileDriverSvc {
         }
 
         AppiumDriver<MobileElement> appiumDriver;
-        if (getMobilePlatform().startsWith(ANDROID)) {
+        if (getCapabilitiesIdentifier().startsWith(ANDROID)) {
             appiumDriver = new AndroidDriver<>(appiumServerUtils.getAppiumServerUrl(), desiredCapabilities);
-        } else if (getMobilePlatform().startsWith(IOS)) {
+        } else if (getCapabilitiesIdentifier().startsWith(IOS)) {
             appiumDriver = new IOSDriver<>(appiumServerUtils.getAppiumServerUrl(), desiredCapabilities);
         } else {
-            LOGGER.error(MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getMobilePlatform());
-            throw new Exception(ExceptionType.UNDEFINED, MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getMobilePlatform());
+            LOGGER.error(MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getCapabilitiesIdentifier());
+            throw new Exception(ExceptionType.UNDEFINED, MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getCapabilitiesIdentifier());
         }
         LOGGER.debug("Driver initiated!!!");
         return appiumDriver;

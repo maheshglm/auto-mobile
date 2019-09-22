@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 @Lazy
 @Component
@@ -34,7 +33,7 @@ public class SearchResultsScreen {
     }
 
     public SearchResultsScreen isResultsPageOpened() {
-        mobileTaskSvc.isElementVisible(searchResultsScreenObjects.listStyle);
+        mobileTaskSvc.verifyElementIsVisible(searchResultsScreenObjects.listStyle);
         return this;
     }
 

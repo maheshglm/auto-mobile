@@ -40,7 +40,7 @@ public class Bootstrap {
         if (!initialized) {
             configureContainer();
             //invokeAppiumServer(APPIUM_SERVER_ACTION.START);
-            //configureLogging();
+            configureLogging();
             initialized = true;
             LOGGER.info("bootstrap: initialized");
         }

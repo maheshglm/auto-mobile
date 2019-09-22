@@ -36,4 +36,5 @@ public class FileDirUtilsRunIT {
         File file = fileDirUtils.getFileFromResources("log4j.xml");
         Assert.assertTrue(file.getAbsolutePath().contains("target/classes/log4j.xml"));
     }
+
 }

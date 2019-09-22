@@ -19,7 +19,7 @@ public class WebSteps {
     private StateSvc stateSvc;
 
     public void launchUrl(final String url) {
-        String expandedUrl = stateSvc.expandExpression(stateSvc.getStringVar(url));
+        String expandedUrl = stateSvc.expandExpression(url);
         mobileTaskSvc.launchBrowser(expandedUrl);
     }
 }

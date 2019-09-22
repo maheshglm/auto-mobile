@@ -1,8 +1,8 @@
 {
   "platformName": "Android",
-  "platformVersion": "4.4",
+  "platformVersion": "8.0",
   "deviceName": "GenyMotion",
-  "udid": "192.168.56.102:5555",
+  "udid": "192.168.56.103:5555",
   "browserName": "Chrome"
 }
 
