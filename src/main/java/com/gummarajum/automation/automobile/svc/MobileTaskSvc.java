@@ -513,8 +513,6 @@ public class MobileTaskSvc {
 
 
     public boolean waitTillApplicationIsOpened(final String activityId, final Integer maxTimeOutInSeconds) {
-        threadSvc.sleepSeconds(2);
-
         long millisStart = dateTimeUtils.currentTimeMillis();
         long millisCurrent = millisStart;
 

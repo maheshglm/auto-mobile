@@ -14,62 +14,27 @@ public class JoplinStepsDef implements En {
             steps.launchJoplinApplication();
         });
 
-        Given("I delete notebook {string} if exists", (String notebookName) -> {
+        Given("I delete notebook {string}", (String notebookName) -> {
             steps.deleteNoteBook(notebookName);
         });
 
         When("I create a new notebook with name {string}", (String notebookName) -> {
-           steps.createNewNoteBook(notebookName);
+            steps.createNewNoteBook(notebookName);
         });
 
-        Then("I expect {string} notebook created", (String notebookName) -> {
-           steps.verifyNoteBookCreated(notebookName);
+        Then("I rename the notebook {string} to {string}", (String notebookName, String newName) -> {
+            steps.renameNoteBook(notebookName, newName);
         });
 
-//        Then("I should see {string}", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I should see + button", () -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I should see Search button", () -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I should see {string} should be listed under {string} section", (String string, String string2) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        When("I rename the notebook to {string}", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I expect Notebook name should be changed to {string}", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Given("I create a new notebook with name {string}", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        When("I delete notebook {string}", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I expect notebook {string} is deleted", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
+        Then("I expect {string} notebook (created|renamed)", (String notebookName) -> {
+            steps.verifyNoteBookAvailable(notebookName);
+        });
+
+        Then("I expect notebook {string} is (deleted|not available)", (String notebookName) -> {
+            steps.verifyNoteBookNotAvailable(notebookName);
+        });
+
+
 //
 //        When("I add a new note with below params", (io.cucumber.datatable.DataTable dataTable) -> {
 //            // Write code here that turns the phrase above into concrete actions

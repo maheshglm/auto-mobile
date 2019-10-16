@@ -5,6 +5,7 @@ import com.constants.ELEMENT_DIRECTION;
 import com.constants.SCREEN_DIRECTION;
 import com.gummarajum.automation.automobile.TestConfig;
 import com.gummarajum.automation.automobile.screens.joplin.actions.NoteBookActions;
+import com.gummarajum.automation.automobile.screens.joplin.actions.ReusableActions;
 import com.gummarajum.automation.automobile.screens.joplin.locators.NoteBookLocators;
 import com.gummarajum.automation.automobile.screens.lazada.actions.HomeScreen;
 import com.gummarajum.automation.automobile.screens.lazada.actions.SearchResultsScreen;
@@ -56,6 +57,9 @@ public class MobileDriverSvcRunIT {
     private NoteBookActions noteBookActions;
 
     @Autowired
+    private ReusableActions reusableActions;
+
+    @Autowired
     private NoteBookLocators noteBookLocators;
 
     @BeforeClass
@@ -78,9 +82,9 @@ public class MobileDriverSvcRunIT {
     public void testJoplin() {
         System.setProperty(CAPABILITIES_IDENTIFIER, "android_joplin");
         mobileTaskSvc.getDriver();
-        noteBookActions.launchJoplinApp();
+        reusableActions.launchJoplinApp();
         noteBookActions.createNewNoteBook("Test1");
-        noteBookActions.verifyNoteBookCreated("Test1");
+        noteBookActions.verifyNoteBookVisible("Test1");
     }
 
 

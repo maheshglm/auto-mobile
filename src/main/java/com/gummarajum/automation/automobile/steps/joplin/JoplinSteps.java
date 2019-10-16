@@ -1,8 +1,7 @@
 package com.gummarajum.automation.automobile.steps.joplin;
 
 import com.gummarajum.automation.automobile.screens.joplin.actions.NoteBookActions;
-import com.gummarajum.automation.automobile.screens.lazada.actions.HomeScreen;
-import com.gummarajum.automation.automobile.steps.lazada.HomeScreenSteps;
+import com.gummarajum.automation.automobile.screens.joplin.actions.ReusableActions;
 import com.gummarajum.automation.automobile.svc.MobileTaskSvc;
 import com.gummarajum.automation.automobile.svc.StateSvc;
 import com.gummarajum.automation.automobile.utils.AdbUtils;
@@ -22,6 +21,9 @@ public class JoplinSteps {
     private NoteBookActions noteBookActions;
 
     @Autowired
+    private ReusableActions reusableActions;
+
+    @Autowired
     private AdbUtils adbUtils;
 
     @Autowired
@@ -31,25 +33,29 @@ public class JoplinSteps {
     private MobileTaskSvc mobileTaskSvc;
 
 
-    public void launchJoplinApplication(){
-        noteBookActions.launchJoplinApp();
+    public void launchJoplinApplication() {
+        reusableActions.launchJoplinApp();
     }
 
-    public void deleteNoteBook(final String notebookName){
-        noteBookActions.deleteNoteBook(stateSvc.expandExpression(notebookName));
-    }
-
-    public void createNewNoteBook(final String notebookName){
+    public void createNewNoteBook(final String notebookName) {
         noteBookActions.createNewNoteBook(stateSvc.expandExpression(notebookName));
     }
 
-    public void verifyNoteBookCreated(final String notebookName){
-        noteBookActions.verifyNoteBookCreated(stateSvc.expandExpression(notebookName));
+    public void deleteNoteBook(final String notebookName) {
+        noteBookActions.deleteNoteBook(stateSvc.expandExpression(notebookName));
     }
 
+    public void renameNoteBook(final String existingName, final String newName) {
+        noteBookActions.renameNoteBook(existingName, newName);
+    }
 
+    public void verifyNoteBookAvailable(final String notebookName) {
+        noteBookActions.verifyNoteBookVisible(stateSvc.expandExpression(notebookName));
+    }
 
-
+    public void verifyNoteBookNotAvailable(final String notebookName) {
+        noteBookActions.verifyNoteBookNotAvailable(stateSvc.expandExpression(notebookName));
+    }
 
 
 }
