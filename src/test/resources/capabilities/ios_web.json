@@ -1,0 +1,10 @@
+{
+  "browserName": "safari",
+  "appiumVersion":"1.15.0",
+  "platformVersion": "11.4",
+  "platformName": "iOS",
+  "deviceName": "iPhone 8 plus",
+  "udid": "8D310B1A-6081-4DD9-9FA6-94C7A2AB99B0",
+  "automationName":"XCUITest"
+
+}

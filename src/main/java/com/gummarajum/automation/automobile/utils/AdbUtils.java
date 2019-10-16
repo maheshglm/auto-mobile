@@ -1,8 +1,8 @@
 package com.gummarajum.automation.automobile.utils;
 
 import com.google.common.base.Strings;
-import com.gummarajum.automation.automobile.Exception;
-import com.gummarajum.automation.automobile.ExceptionType;
+import com.gummarajum.automation.automobile.MobileException;
+import com.gummarajum.automation.automobile.MobileExceptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class AdbUtils {
     private void validateDeviceIdIsSet() {
         if (Strings.isNullOrEmpty(deviceId)) {
             LOGGER.error("Device Id is not set either in Local or in Aws");
-            throw new Exception(ExceptionType.UNDEFINED, "Device Id is not set either in Local or in Aws");
+            throw new MobileException(MobileExceptionType.UNDEFINED, "Device Id is not set either in Local or in Aws");
         }
     }
 

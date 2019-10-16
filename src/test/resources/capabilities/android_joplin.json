@@ -1,0 +1,8 @@
+{
+  "platformName": "Android",
+  "platformVersion": "8.0",
+  "deviceName": "Google Pixel 2.0",
+  "udid": "192.168.56.103:5555",
+  "app": "/Users/maheshgummaraju/work/Projects/Java/auto-mobile/src/test/resources/binaries/apk/Joplin.apk",
+  "noReset": "false"
+}

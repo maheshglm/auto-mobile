@@ -4,32 +4,27 @@ import com.cfg.Config;
 import com.constants.ELEMENT_DIRECTION;
 import com.constants.SCREEN_DIRECTION;
 import com.gummarajum.automation.automobile.TestConfig;
-import com.gummarajum.automation.automobile.lazada.screens.actions.HomeScreen;
-import com.gummarajum.automation.automobile.lazada.screens.actions.SearchResultsScreen;
+import com.gummarajum.automation.automobile.screens.joplin.actions.NoteBookActions;
+import com.gummarajum.automation.automobile.screens.joplin.locators.NoteBookLocators;
+import com.gummarajum.automation.automobile.screens.lazada.actions.HomeScreen;
+import com.gummarajum.automation.automobile.screens.lazada.actions.SearchResultsScreen;
 import com.gummarajum.automation.automobile.utils.AdbUtils;
 import com.gummarajum.automation.automobile.utils.AppiumServerUtils;
-import com.mdl.GetXY;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.nativekey.AndroidKey;
-import io.appium.java_client.touch.WaitOptions;
-import io.appium.java_client.touch.offset.PointOption;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 import static com.constants.Properties.APPIUM_LOG_LEVEL;
 import static com.constants.Properties.APPIUM_SERVER_URL;
 import static com.constants.Properties.CAPABILITIES_IDENTIFIER;
-import static io.appium.java_client.touch.offset.PointOption.point;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = Config.class)
@@ -55,6 +50,14 @@ public class MobileDriverSvcRunIT {
     @Autowired
     private SearchResultsScreen searchResultsScreen;
 
+
+    @Lazy
+    @Autowired
+    private NoteBookActions noteBookActions;
+
+    @Autowired
+    private NoteBookLocators noteBookLocators;
+
     @BeforeClass
     public static void setUp() {
         TestConfig.configureLogging(MobileDriverSvcRunIT.class);
@@ -72,6 +75,31 @@ public class MobileDriverSvcRunIT {
 
 
     @Test
+    public void testJoplin() {
+        System.setProperty(CAPABILITIES_IDENTIFIER, "android_joplin");
+        mobileTaskSvc.getDriver();
+        noteBookActions.launchJoplinApp();
+        noteBookActions.createNewNoteBook("Test1");
+        noteBookActions.verifyNoteBookCreated("Test1");
+    }
+
+
+    @Ignore
+    @Test
+    public void testSafari() {
+        System.setProperty(CAPABILITIES_IDENTIFIER, "ios_web");
+        mobileTaskSvc.getDriver();
+        mobileTaskSvc.launchBrowser("http://www.google.com");
+        mobileTaskSvc.sendKeys(mobileTaskSvc.findElement(By.name("Search")), "Hello Appium!!!");
+
+        threadSvc.sleepSeconds(2);
+
+        mobileTaskSvc.quitDriver();
+    }
+
+
+    @Ignore
+    @Test
     public void testDragNDrop() {
         try {
             System.setProperty(CAPABILITIES_IDENTIFIER, "android_test");
@@ -80,38 +108,25 @@ public class MobileDriverSvcRunIT {
 
             threadSvc.sleepSeconds(1);
 
-            mobileTaskSvc.pressAndroidKey(AndroidKey.HOME);
+            /*mobileTaskSvc.pressAndroidKey(AndroidKey.HOME);
 
             mobileTaskSvc.swipeScreen(SCREEN_DIRECTION.RIGHT,1000);
-            mobileTaskSvc.swipeScreen(SCREEN_DIRECTION.RIGHT,1000);
+            mobileTaskSvc.swipeScreen(SCREEN_DIRECTION.RIGHT,1000);*/
 
             /*mobileTaskSvc.findElement(By.id("com.samsung.android.contacts:id/menu_search")).click();
             mobileTaskSvc.findElement(By.id("com.samsung.android.contacts:id/search_src_text")).sendKeys("AMyIndia");
 
-            MobileElement element = mobileTaskSvc.findElement(By.xpath("//android.widget.TextView[@content-desc='AMyIndia']"));
-
-            mobileTaskSvc.swipeElement(element, ELEMENT_DIRECTION.RIGHT, 1000);*/
+            MobileElement element = mobileTaskSvc.findElement(By.xpath("//android.widget.TextView[@content-desc='AMyIndia']"));*/
 
 
-            /*MobileElement element = mobileTaskSvc.getElementReference(By.xpath("//android.widget.TextView[@content-desc='AMyIndia']"));
+            MobileElement element = mobileTaskSvc.getElementByReference(By.xpath("//android.widget.TextView[@content-desc='AMyIndia']"));
             while (element == null) {
                 mobileTaskSvc.swipeScreen(SCREEN_DIRECTION.DOWN, 1000);
-                element = mobileTaskSvc.getElementReference(By.xpath("//android.widget.TextView[@content-desc='AMyIndia']"));
-            }*/
+                threadSvc.sleepSeconds(1);
+                element = mobileTaskSvc.getElementByReference(By.xpath("//android.widget.TextView[@content-desc='AMyIndia']"));
+            }
 
-            //GetXY elementXY = mobileTaskSvc.getElementXY(element);
-
-            //mobileTaskSvc.swipe(elementXY.getX(), elementXY.getY(), elementXY.getX(), elementXY.getY() + 200, 1000);
-
-
-            //mobileTaskSvc.swipe(elementXY.getX(), elementXY.getY(), elementXY.getX() - 100, elementXY.getY(), 1000);
-
-            //swipeScreen left x,y
-            /*mobileTaskSvc.getTouchAction()
-                    .press(PointOption.point(elementXY.getX() , elementXY.getY()))
-                    .moveTo(PointOption.point(elementXY.getX() + 200, elementXY.getY()))
-                    .release()
-                    .perform();*/
+            mobileTaskSvc.swipeElement(element, ELEMENT_DIRECTION.RIGHT, 1000);
 
             threadSvc.sleepSeconds(2);
 

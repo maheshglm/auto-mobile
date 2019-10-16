@@ -23,15 +23,20 @@ public class HooksSteps {
         scenarioUtils.setScenario(scenario);
     }
 
-    public void setDriver(){
+    public void setDriver() {
         mobileTaskSvc.getDriver();
     }
 
-    public void quitDriver(){
-        mobileTaskSvc.quitDriver();
+    public void closeApp() {
+        mobileTaskSvc.closeApp();
     }
 
-    public void closeApp(){
-        mobileTaskSvc.closeApp();
+    public void tearDownProcess() {
+        if (scenarioUtils.isScenarioFailed()) {
+            mobileTaskSvc.takeScreenshot("OnFailure");
+            LOGGER.error("Screenshot captured while executing failed scenario [{}]", scenarioUtils.getScenarioName());
+            LOGGER.error("Quitting Appium Driver!!!");
+            mobileTaskSvc.quitDriver();
+        }
     }
 }

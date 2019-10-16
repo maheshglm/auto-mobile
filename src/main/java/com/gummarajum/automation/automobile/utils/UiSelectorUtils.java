@@ -1,8 +1,8 @@
 package com.gummarajum.automation.automobile.utils;
 
 import com.constants.UISELECTORS;
-import com.gummarajum.automation.automobile.Exception;
-import com.gummarajum.automation.automobile.ExceptionType;
+import com.gummarajum.automation.automobile.MobileException;
+import com.gummarajum.automation.automobile.MobileExceptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -61,7 +61,7 @@ public class UiSelectorUtils {
                 return this.descriptionMatches(identifier);
             default:
                 LOGGER.error("Invalid UiSelector [{}] chosen", selectors.name());
-                throw new Exception(ExceptionType.UNDEFINED, "Invalid UiSelector [{}] chosen", selectors.name());
+                throw new MobileException(MobileExceptionType.UNDEFINED, "Invalid UiSelector [{}] chosen", selectors.name());
 
         }
     }

@@ -1,7 +1,6 @@
 package com.gummarajum.automation.automobile.steps.lazada;
 
-import com.gummarajum.automation.automobile.lazada.screens.actions.HomeScreen;
-import com.gummarajum.automation.automobile.lazada.screens.locators.HomeScreenObjects;
+import com.gummarajum.automation.automobile.screens.lazada.actions.HomeScreen;
 import com.gummarajum.automation.automobile.svc.MobileTaskSvc;
 import com.gummarajum.automation.automobile.svc.StateSvc;
 import com.gummarajum.automation.automobile.utils.AdbUtils;

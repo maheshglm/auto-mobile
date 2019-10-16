@@ -1,12 +1,13 @@
 package com.gummarajum.automation.automobile.svc;
 
 import com.constants.ELEMENT_DIRECTION;
+import com.constants.LOCATORS;
 import com.constants.SCREEN_DIRECTION;
 import com.constants.UISELECTORS;
-import com.gummarajum.automation.automobile.Exception;
-import com.gummarajum.automation.automobile.ExceptionType;
-import com.gummarajum.automation.automobile.utils.FormatterUtils;
-import com.gummarajum.automation.automobile.utils.UiSelectorUtils;
+import com.gummarajum.automation.automobile.Bootstrap;
+import com.gummarajum.automation.automobile.MobileException;
+import com.gummarajum.automation.automobile.MobileExceptionType;
+import com.gummarajum.automation.automobile.utils.*;
 import com.mdl.GetXY;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -28,9 +29,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.beans.Introspector;
+import java.io.File;
+import java.lang.reflect.Field;
 import java.time.Duration;
+import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
+import static com.constants.Properties.SCREENSHOT_PATH;
 import static io.appium.java_client.touch.WaitOptions.waitOptions;
 import static io.appium.java_client.touch.offset.ElementOption.element;
 import static io.appium.java_client.touch.offset.PointOption.point;
@@ -44,6 +50,9 @@ public class MobileTaskSvc {
     public static final String ELEMENT_IS_NOT_VISIBLE = "Element [{}] is not visible";
 
     public static final Integer DEFAULT_IMPLICIT_TIMEOUT = 10;
+    private Hashtable<String, Integer> namePrefices = new Hashtable<>();
+    private AppiumDriver driver;
+    private boolean sessionEstablished = false;
 
     @Autowired
     private MobileDriverSvc mobileDriverSvc;
@@ -57,9 +66,21 @@ public class MobileTaskSvc {
     @Autowired
     private FormatterUtils formatterUtils;
 
-    private AppiumDriver driver;
+    @Autowired
+    private ThreadSvc threadSvc;
 
-    private boolean sessionEstablished = false;
+    @Autowired
+    private FileDirUtils fileDirUtils;
+
+    @Autowired
+    private ScenarioUtils scenarioUtils;
+
+    @Autowired
+    private AdbUtils adbUtils;
+
+    @Autowired
+    private DateTimeUtils dateTimeUtils;
+
 
     public AppiumDriver getDriver() {
         if (!sessionEstablished) {
@@ -82,6 +103,10 @@ public class MobileTaskSvc {
         return new MultiTouchAction(getDriver());
     }
 
+    public WebDriverWait getWebDriverWait(final Integer timeoutInSeconds) {
+        return new WebDriverWait(getDriver(), timeoutInSeconds);
+    }
+
     public void launchBrowser(final String url) {
         getDriver().get(url);
     }
@@ -97,8 +122,8 @@ public class MobileTaskSvc {
     public void closeApp() {
         try {
             getDriver().closeApp();
-        } catch (Exception e) {
-            LOGGER.error("Exception occurred while closing app");
+        } catch (java.lang.Exception e) {
+            LOGGER.error("MobileException occurred while closing app");
         }
     }
 
@@ -154,40 +179,21 @@ public class MobileTaskSvc {
                 .perform();
     }
 
-
     public void pressAndroidKey(AndroidKey androidKey) {
         try {
             ((AndroidDriver) getDriver()).pressKey(new KeyEvent(androidKey));
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             LOGGER.error("Unable to perform presskey on [{}]", androidKey.name(), e);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "Unable to perform presskey on [{}]", androidKey.name());
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Unable to perform presskey on [{}]", androidKey.name());
         }
     }
-
-    public MobileElement findElement(final By by) {
-        try {
-            return (MobileElement) getDriver().findElement(by);
-        } catch (Exception e) {
-            LOGGER.error("Exception while finding element with By [{}]", by.toString(), e);
-            throw new Exception(ExceptionType.VALIDATION_FAILED, "Exception while finding element with By [{}]", by.toString());
-        }
-    }
-
-    public MobileElement getElementReference(By by) {
-        try {
-            return (MobileElement) getDriver().findElement(by);
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
 
     public void longPressAndroidKey(AndroidKey androidKey) {
         try {
             ((AndroidDriver) getDriver()).longPressKey(new KeyEvent(androidKey));
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             LOGGER.error("Unable to perform longpresskey on [{}]", androidKey.name(), e);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "Unable to perform longpresskey on [{}]", androidKey.name());
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Unable to perform longpresskey on [{}]", androidKey.name());
         }
     }
 
@@ -201,6 +207,169 @@ public class MobileTaskSvc {
                 .perform();
     }
 
+    public MobileElement scrollIntoView(final UISELECTORS parentSelector, final String parentIdentifier, final UISELECTORS elementSelector, final String elementIdentifier) {
+        String parentUiLocator = uiSelectorUtils.constructUiSelector(parentSelector, parentIdentifier).getLocator();
+        String elementUiLocator = uiSelectorUtils.constructUiSelector(elementSelector, elementIdentifier).getLocator();
+        try {
+            String scrollLocator = formatterUtils.format("new UiScrollable(%s).scrollIntoView(%s);", parentUiLocator, elementUiLocator);
+            return (MobileElement) ((AndroidDriver) getDriver()).findElementByAndroidUIAutomator(scrollLocator);
+        } catch (java.lang.Exception e) {
+            LOGGER.error("MobileException occurred while scrolling to [{}]", elementIdentifier);
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "MobileException occurred while scrolling to [{}]", elementIdentifier);
+        }
+    }
+
+    public MobileElement scrollIntoView(final UISELECTORS elementSelector, final String elementIdentifier) {
+        String elementUiLocator = uiSelectorUtils.constructUiSelector(elementSelector, elementIdentifier).getLocator();
+        try {
+            String scrollLocator = formatterUtils.format("new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(%s);", elementUiLocator);
+            return (MobileElement) ((AndroidDriver) getDriver()).findElementByAndroidUIAutomator(scrollLocator);
+        } catch (java.lang.Exception e) {
+            LOGGER.error("MobileException occurred while scrolling to [{}]", elementIdentifier);
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "MobileException occurred while scrolling to [{}]", elementIdentifier);
+        }
+    }
+
+    public MobileElement scrollElementIntoView(final By by, final long swipeDownDuration) {
+        MobileElement element = this.getElementByReference(by);
+        while (element == null) {
+            this.swipeScreen(SCREEN_DIRECTION.DOWN, swipeDownDuration);
+            threadSvc.sleepSeconds(1);
+            element = this.getElementByReference(by);
+        }
+        return element;
+    }
+
+    public void swipeElement(MobileElement element, ELEMENT_DIRECTION direction, long duration) {
+        GetXY elementXY = this.getElementXY(element);
+        Dimension size = this.getDriver().manage().window().getSize();
+        int endPoint = 0;
+
+        switch (direction) {
+            case RIGHT:
+                endPoint = (int) (size.width * 0.9);
+                break;
+
+            case LEFT:
+                endPoint = (int) (size.width * 0.2);
+                break;
+        }
+
+        this.getTouchAction()
+                .press(point(elementXY.getX(), elementXY.getY()))
+                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
+                .moveTo(PointOption.point(endPoint, elementXY.getY()))
+                .release()
+                .perform();
+    }
+
+
+    public void swipeScreen(SCREEN_DIRECTION direction, long durationInMilliSeconds) {
+        Dimension size = getDriver().manage().window().getSize();
+
+        int startX = 0;
+        int endX = 0;
+        int startY = 0;
+        int endY = 0;
+
+        switch (direction) {
+            case LEFT:
+                startY = (size.height / 2);
+                startX = (int) (size.width * 0.90);
+                endX = (int) (size.width * 0.05);
+                getTouchAction()
+                        .press(PointOption.point(startX, startY))
+                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(durationInMilliSeconds)))
+                        .moveTo(PointOption.point(endX, startY))
+                        .release()
+                        .perform();
+                break;
+
+            case RIGHT:
+                startY = (size.height / 2);
+                startX = (int) (size.width * 0.05);
+                endX = (int) (size.width * 0.90);
+                getTouchAction()
+                        .press(PointOption.point(startX, startY))
+                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(durationInMilliSeconds)))
+                        .moveTo(PointOption.point(endX, startY))
+                        .release()
+                        .perform();
+                break;
+
+            case UP:
+                startY = (int) (size.height * 0.30);
+                startX = (size.width / 2);
+                getTouchAction()
+                        .press(PointOption.point(startX, startY))
+                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(durationInMilliSeconds)))
+                        .moveTo(PointOption.point(endX, startY))
+                        .release()
+                        .perform();
+                break;
+
+
+            case DOWN:
+                startY = (int) (size.height * 0.80);
+                endY = (int) (size.height * 0.20);
+                startX = (size.width / 2);
+                getTouchAction()
+                        .press(PointOption.point(startX, startY))
+                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(durationInMilliSeconds)))
+                        .moveTo(PointOption.point(startX, endY))
+                        .release()
+                        .perform();
+                break;
+
+        }
+    }
+
+
+    public By constructByObject(final LOCATORS locator, final String identifier) {
+        if (locator.equals(LOCATORS.XPATH)) {
+            return By.xpath(identifier);
+        } else if (locator.equals(LOCATORS.ID)) {
+            return By.id(identifier);
+        } else if (locator.equals(LOCATORS.CLASSNAME)) {
+            return By.className(identifier);
+        } else if (locator.equals(LOCATORS.CSS)) {
+            return By.cssSelector(identifier);
+        } else {
+            LOGGER.error("Undefined Locator to construct By object");
+            throw new MobileException(MobileExceptionType.UNDEFINED, "Undefined Locator to construct By object");
+        }
+    }
+
+
+    public MobileElement findElement(final By by) {
+        try {
+            return (MobileElement) getDriver().findElement(by);
+        } catch (Exception e) {
+            LOGGER.error("Exception while finding element with By [{}]", by.toString(), e);
+            throw new MobileException(MobileExceptionType.VALIDATION_FAILED, "Exception while finding element with By [{}]", by.toString());
+        }
+    }
+
+    public MobileElement getElementByReference(final By by) {
+        try {
+            return (MobileElement) getDriver().findElement(by);
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+
+    public MobileElement getElementByReflection(final String className, final String mobileElementName) {
+        Object bean = Bootstrap.getBean(Introspector.decapitalize(className));
+        try {
+            Field field = bean.getClass().getField(mobileElementName);
+            return (MobileElement) field.get(bean);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.error("Unable to fetch MobileElement in Class [{}] with Name [{}]", className, mobileElementName, e);
+            throw new MobileException(MobileExceptionType.UNSATISFIED_IMPLICIT_ASSUMPTION, "Unable to fetch MobileElement in Class [{}] with Name [{}]", className, mobileElementName);
+        }
+    }
+
 
     private GetXY getElementXY(final MobileElement mobileElement) {
         Point pointElement = mobileElement.getLocation();
@@ -212,22 +381,14 @@ public class MobileTaskSvc {
         return new GetXY(x, y);
     }
 
-
     public void launchApp() {
         getDriver().launchApp();
     }
-
-
-    public WebDriverWait getWebDriverWait(final Integer timeoutInSeconds) {
-        return new WebDriverWait(getDriver(), timeoutInSeconds);
-    }
-
 
     public void clickIfVisible(MobileElement element, Integer timeOutInSeconds) {
         if (this.waitTillElementIsPresent(element, timeOutInSeconds))
             this.click(element);
     }
-
 
     public void click(final By by) {
         MobileElement element = this.findElement(by);
@@ -242,9 +403,9 @@ public class MobileTaskSvc {
                     .until(ExpectedConditions.elementToBeClickable(element));
 
             element.click();
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             LOGGER.error("Element [{}] is not clickable", element.toString(), e);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "Element [{}] is not clickable", element.toString());
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Element [{}] is not clickable", element.toString());
         }
     }
 
@@ -257,9 +418,9 @@ public class MobileTaskSvc {
 
             element.clear();
             element.sendKeys(textToEnter);
-        } catch (Exception e) {
+        } catch (java.lang.Exception e) {
             LOGGER.error("Element [{}] is not clickable", element.toString(), e);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "Element [{}] is not clickable", element.toString());
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Element [{}] is not clickable", element.toString());
         }
     }
 
@@ -267,21 +428,17 @@ public class MobileTaskSvc {
         try {
             if (element != null && !element.isDisplayed()) {
                 LOGGER.error(ELEMENT_IS_NOT_VISIBLE, element.toString());
-                throw new Exception(ExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
+                throw new MobileException(MobileExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
             }
         } catch (NoSuchElementException e) {
             LOGGER.error(ELEMENT_IS_NOT_VISIBLE, element.toString(), e);
-            throw new Exception(ExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
+            throw new MobileException(MobileExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
         }
     }
 
     public void verifyElementIsVisible(By by) {
         MobileElement element = this.findElement(by);
         verifyElementIsVisible(element);
-    }
-
-    public boolean isElementVisible(By by) {
-        return waitTillElementIsPresent(by, 0);
     }
 
     public void verifyElementIsVisible(MobileElement element, Integer timeOutInSeconds) {
@@ -293,11 +450,11 @@ public class MobileTaskSvc {
 
             if (element != null && !element.isDisplayed()) {
                 LOGGER.error(ELEMENT_IS_NOT_VISIBLE, element.toString());
-                throw new Exception(ExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
+                throw new MobileException(MobileExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
             }
         } catch (NoSuchElementException e) {
             LOGGER.error(ELEMENT_IS_NOT_VISIBLE, element.toString(), e);
-            throw new Exception(ExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
+            throw new MobileException(MobileExceptionType.VERIFICATION_FAILED, ELEMENT_IS_NOT_VISIBLE, element.toString());
         }
     }
 
@@ -325,122 +482,83 @@ public class MobileTaskSvc {
         return true;
     }
 
-
     public MobileElement getElementByUISelector(UISELECTORS uiSelectors, String identifier) {
         String locator = uiSelectorUtils.constructUiSelector(uiSelectors, identifier).getLocator();
         try {
             return (MobileElement) ((AndroidDriver) getDriver()).findElementByAndroidUIAutomator(locator);
-        } catch (Exception e) {
-            LOGGER.error("Exception occurred while finding element by Android UiAutomator with selector [{}] and identifier [{}]", uiSelectors.name(), identifier);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "Exception occurred while finding element by Android UiAutomator with selector [{}] and identifier [{}]", uiSelectors.name(), identifier);
+        } catch (java.lang.Exception e) {
+            LOGGER.error("MobileException occurred while finding element by Android UiAutomator with selector [{}] and identifier [{}]", uiSelectors.name(), identifier);
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "MobileException occurred while finding element by Android UiAutomator with selector [{}] and identifier [{}]", uiSelectors.name(), identifier);
         }
     }
 
-
-    public MobileElement scrollIntoView(final UISELECTORS parentSelector, final String parentIdentifier, final UISELECTORS elementSelector, final String elementIdentifier) {
-        String parentUiLocator = uiSelectorUtils.constructUiSelector(parentSelector, parentIdentifier).getLocator();
-        String elementUiLocator = uiSelectorUtils.constructUiSelector(elementSelector, elementIdentifier).getLocator();
-        try {
-            String scrollLocator = formatterUtils.format("new UiScrollable(%s).scrollIntoView(%s);", parentUiLocator, elementUiLocator);
-            return (MobileElement) ((AndroidDriver) getDriver()).findElementByAndroidUIAutomator(scrollLocator);
-        } catch (Exception e) {
-            LOGGER.error("Exception occurred while scrolling to [{}]", elementIdentifier);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "Exception occurred while scrolling to [{}]", elementIdentifier);
-        }
+    private Integer generateScreenshotNumber(final String prefix) {
+        Integer snapshotNumber = namePrefices.getOrDefault(prefix, 0);
+        namePrefices.put(prefix, snapshotNumber + 1);
+        return namePrefices.get(prefix);
     }
 
-    public MobileElement scrollIntoView(final UISELECTORS elementSelector, final String elementIdentifier) {
-        String elementUiLocator = uiSelectorUtils.constructUiSelector(elementSelector, elementIdentifier).getLocator();
-        try {
-            String scrollLocator = formatterUtils.format("new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(%s);", elementUiLocator);
-            return (MobileElement) ((AndroidDriver) getDriver()).findElementByAndroidUIAutomator(scrollLocator);
-        } catch (Exception e) {
-            LOGGER.error("Exception occurred while scrolling to [{}]", elementIdentifier);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "Exception occurred while scrolling to [{}]", elementIdentifier);
-        }
+    public void takeScreenshot(final String prefix) {
+        File src = getDriver().getScreenshotAs(OutputType.FILE);
+        String pathname = SCREENSHOT_PATH + File.separator + prefix + "_" + this.generateScreenshotNumber(prefix) + ".png";
+        File dst = new File(System.getProperty("user.dir") + File.separator + pathname);
+        fileDirUtils.copyFile(src, dst);
+        byte[] bytes = fileDirUtils.readFileToByteArray(dst.getAbsolutePath());
+        scenarioUtils.embed(bytes, "image/png");
     }
 
-    public void swipeElement(MobileElement element, ELEMENT_DIRECTION direction, long duration) {
-        GetXY elementXY = this.getElementXY(element);
-        Dimension size = this.getDriver().manage().window().getSize();
-        int endPoint = 0;
-
-        switch (direction) {
-            case RIGHT:
-                endPoint = (int) (size.width * 0.9);
-                break;
-
-            case LEFT:
-                endPoint = (int) (size.width * 0.2);
-                break;
-        }
-
-        this.getTouchAction()
-                .press(point(elementXY.getX(), elementXY.getY()))
-                .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
-                .moveTo(PointOption.point(endPoint, elementXY.getY()))
-                .release()
-                .perform();
+    public synchronized void takeScreenshot() {
+        this.takeScreenshot("screenshot");
     }
 
-    public void swipeScreen(SCREEN_DIRECTION direction, long duration) {
-        Dimension size = getDriver().manage().window().getSize();
 
-        int startX = 0;
-        int endX = 0;
-        int startY = 0;
-        int endY = 0;
+    public boolean waitTillApplicationIsOpened(final String activityId, final Integer maxTimeOutInSeconds) {
+        threadSvc.sleepSeconds(2);
 
-        switch (direction) {
-            case RIGHT:
-                startY = (size.height / 2);
-                startX = (int) (size.width * 0.90);
-                endX = (int) (size.width * 0.05);
-                getTouchAction()
-                        .press(PointOption.point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
-                        .moveTo(PointOption.point(endX, startY))
-                        .release()
-                        .perform();
-                break;
+        long millisStart = dateTimeUtils.currentTimeMillis();
+        long millisCurrent = millisStart;
 
-            case LEFT:
-                startY = (size.height / 2);
-                startX = (int) (size.width * 0.05);
-                endX = (int) (size.width * 0.90);
-                getTouchAction()
-                        .press(PointOption.point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
-                        .moveTo(PointOption.point(endX, startY))
-                        .release()
-                        .perform();
-                break;
-
-            case UP:
-                startY = (int) (size.height * 0.30);
-                startX = (size.width / 2);
-                getTouchAction()
-                        .press(PointOption.point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
-                        .moveTo(PointOption.point(endX, startY))
-                        .release()
-                        .perform();
-                break;
-
-
-            case DOWN:
-                startY = (int) (size.height * 0.80);
-                endY = (int) (size.height * 0.20);
-                startX = (size.width / 2);
-                getTouchAction()
-                        .press(PointOption.point(startX, startY))
-                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(duration)))
-                        .moveTo(PointOption.point(startX, endY))
-                        .release()
-                        .perform();
-                break;
-
+        String foregroundActivity = adbUtils.getForegroundActivity();
+        while ((millisCurrent - millisStart) / 1000 <= maxTimeOutInSeconds) {
+            if (foregroundActivity.contains(activityId)) {
+                return true;
+            }
+            LOGGER.warn("App is not opened Yet, Launching App...");
+            this.launchApp();
+            threadSvc.sleepSeconds(2);
+            foregroundActivity = adbUtils.getForegroundActivity();
+            millisCurrent = dateTimeUtils.currentTimeMillis();
         }
+        return false;
     }
+
+    public MobileElement getElementByReference(final By by, final Integer maxPollingTime) {
+        long millisStart = dateTimeUtils.currentTimeMillis();
+        long millisCurrent = millisStart;
+
+        MobileElement element = this.getElementByReference(by);
+        while (element == null && ((millisCurrent - millisStart) / 1000) <= maxPollingTime) {
+            threadSvc.sleepSeconds(2);
+            millisCurrent = dateTimeUtils.currentTimeMillis();
+            element = this.getElementByReference(by);
+        }
+
+        if (element == null) {
+            LOGGER.error("Element not found with By Object [{}]", by.toString());
+            throw new MobileException(MobileExceptionType.ELEMENT_NOT_FOUND, "Element not found with By Object [{}]", by.toString());
+        }
+        return element;
+    }
+
+
+    public String getAttribute(final MobileElement element, final String attribute) {
+        if (element != null) {
+            return element.getAttribute(attribute);
+        }
+        return "";
+    }
+
 
 }
+
+

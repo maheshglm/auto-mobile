@@ -1,7 +1,7 @@
 package com.gummarajum.automation.automobile.svc;
 
-import com.gummarajum.automation.automobile.Exception;
-import com.gummarajum.automation.automobile.ExceptionType;
+import com.gummarajum.automation.automobile.MobileException;
+import com.gummarajum.automation.automobile.MobileExceptionType;
 import io.cucumber.datatable.DataTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,7 @@ public class DataTableSvc {
     public List<String> getFirstColsAsList(final DataTable dataTable) {
         if (dataTable == null) {
             LOGGER.error(DATA_TABLE_IS_EMPTY_OR_NULL);
-            throw new Exception(ExceptionType.UNDEFINED, DATA_TABLE_IS_EMPTY_OR_NULL);
+            throw new MobileException(MobileExceptionType.UNDEFINED, DATA_TABLE_IS_EMPTY_OR_NULL);
         }
         return dataTable.asList(String.class);
     }
@@ -29,7 +29,7 @@ public class DataTableSvc {
     public Map<String,String> getTwoColumnsAsMap(final DataTable dataTable){
         if (dataTable == null) {
             LOGGER.error(DATA_TABLE_IS_EMPTY_OR_NULL);
-            throw new Exception(ExceptionType.UNDEFINED, DATA_TABLE_IS_EMPTY_OR_NULL);
+            throw new MobileException(MobileExceptionType.UNDEFINED, DATA_TABLE_IS_EMPTY_OR_NULL);
         }
         return dataTable.asMap(String.class, String.class);
     }

@@ -4,7 +4,6 @@ import com.cfg.Config;
 import com.gummarajum.automation.automobile.TestConfig;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +26,8 @@ public class FileDirUtilsRunIT {
 
     @Test
     public void testGetFileFromResources_testResources() {
-        File file = fileDirUtils.getFileFromResources("capabilities/android.json");
-        Assert.assertTrue(file.getAbsolutePath().contains("target/test-classes/capabilities/android.json"));
+        File file = fileDirUtils.getFileFromResources("capabilities/android_laz.json");
+        Assert.assertTrue(file.getAbsolutePath().contains("target/test-classes/capabilities/android_laz.json"));
     }
 
     @Test

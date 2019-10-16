@@ -1,8 +1,8 @@
 package com.gummarajum.automation.automobile.utils;
 
 import com.google.common.base.Strings;
-import com.gummarajum.automation.automobile.Exception;
-import com.gummarajum.automation.automobile.ExceptionType;
+import com.gummarajum.automation.automobile.MobileException;
+import com.gummarajum.automation.automobile.MobileExceptionType;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class FileDirUtils {
             return FileUtils.readFileToString(new File(filename), StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOGGER.error("readFileToString():failed to read file to string [{}]", filename);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "readFileToString():failed to read file to string [{}]", filename);
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "readFileToString():failed to read file to string [{}]", filename);
         }
     }
 
@@ -34,7 +34,7 @@ public class FileDirUtils {
             FileUtils.writeStringToFile(new File(filename), strToWrite, StandardCharsets.UTF_8);
         } catch (IOException e) {
             LOGGER.error("writeStringToFile():failed to write string to file [{}]", filename);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "writeStringToFile():failed to write string to file [{}]", filename);
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "writeStringToFile():failed to write string to file [{}]", filename);
         }
     }
 
@@ -43,7 +43,7 @@ public class FileDirUtils {
             FileUtils.copyFile(src, dst);
         } catch (IOException e) {
             LOGGER.error("failed to copy file");
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "failed copy file");
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "failed copy file");
         }
     }
 
@@ -54,7 +54,7 @@ public class FileDirUtils {
     public boolean verifyFileExists(final String path) {
         if (Strings.isNullOrEmpty(path)) {
             LOGGER.error("file path must be specified");
-            throw new Exception(ExceptionType.UNSATISFIED_IMPLICIT_ASSUMPTION, "file path must be specified");
+            throw new MobileException(MobileExceptionType.UNSATISFIED_IMPLICIT_ASSUMPTION, "file path must be specified");
         }
         final File file = new File(path);
         return file.exists() && file.isFile();
@@ -63,7 +63,7 @@ public class FileDirUtils {
     public boolean verifyDirExists(final String path) {
         if (Strings.isNullOrEmpty(path)) {
             LOGGER.error("file path must be specified");
-            throw new Exception(ExceptionType.UNSATISFIED_IMPLICIT_ASSUMPTION, "file path must be specified");
+            throw new MobileException(MobileExceptionType.UNSATISFIED_IMPLICIT_ASSUMPTION, "file path must be specified");
         }
         final File file = new File(path);
         return file.exists() && file.isDirectory();
@@ -88,12 +88,20 @@ public class FileDirUtils {
         URL resource = classLoader.getResource(filename);
         if (resource == null) {
             LOGGER.error("file [{}] not found!", filename);
-            throw new Exception(ExceptionType.PROCESSING_FAILED, "file [{}] not found!", filename);
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "file [{}] not found!", filename);
         } else {
             return new File(resource.getFile());
         }
     }
 
+    public byte[] readFileToByteArray(final String filename) {
+        try {
+            return FileUtils.readFileToByteArray(new File(filename));
+        } catch (IOException e) {
+            LOGGER.error("MobileException occurred while reading File [{}] to byte array", filename, e);
+            throw new MobileException(MobileExceptionType.IO_ERROR, "MobileException occurred while reading File [{}] to byte array", filename, e);
+        }
+    }
 
 
 }

@@ -1,7 +1,7 @@
 package com.gummarajum.automation.automobile.utils;
 
-import com.gummarajum.automation.automobile.Exception;
-import com.gummarajum.automation.automobile.ExceptionType;
+import com.gummarajum.automation.automobile.MobileException;
+import com.gummarajum.automation.automobile.MobileExceptionType;
 import io.cucumber.datatable.dependency.com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ public class JsonUtils {
         try {
             return mapper.readValue(jsonString, Map.class);
         } catch (IOException e) {
-            LOGGER.error("Exception while converting Json to Map");
-            throw new Exception(ExceptionType.IO_ERROR,"Exception while converting Json to Map");
+            LOGGER.error("MobileException while converting Json to Map");
+            throw new MobileException(MobileExceptionType.IO_ERROR,"MobileException while converting Json to Map");
         }
     }
 }

@@ -15,4 +15,6 @@ public class Properties {
     public static final String APPIUM_SERVER_URL = "appium.server.url";
 
     public static final String CHROME_DRIVER_PATH = "binaries/chrome/chromedriver";
+
+    public static final String SCREENSHOT_PATH = "testout/screenshots";
 }

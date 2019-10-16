@@ -2,8 +2,8 @@ package com.gummarajum.automation.automobile.svc;
 
 
 import com.google.common.base.Strings;
-import com.gummarajum.automation.automobile.Exception;
-import com.gummarajum.automation.automobile.ExceptionType;
+import com.gummarajum.automation.automobile.MobileException;
+import com.gummarajum.automation.automobile.MobileExceptionType;
 import com.gummarajum.automation.automobile.utils.*;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
@@ -30,7 +30,7 @@ public class MobileDriverSvc {
     private static final String IOS = "ios";
     private static final String UDID = "udid";
     private static final String MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT = "Mobile platform should be 'ios' or 'android', but not [{}]";
-    private static final String EXCEPTION_WHILE_QUITTING_APPIUM_DRIVER = "Exception while quitting appium driver";
+    private static final String EXCEPTION_WHILE_QUITTING_APPIUM_DRIVER = "MobileException while quitting appium driver";
 
     @Autowired
     private StateSvc stateSvc;
@@ -108,7 +108,7 @@ public class MobileDriverSvc {
             appiumDriver = new IOSDriver<>(appiumServerUtils.getAppiumServerUrl(), desiredCapabilities);
         } else {
             LOGGER.error(MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getCapabilitiesIdentifier());
-            throw new Exception(ExceptionType.UNDEFINED, MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getCapabilitiesIdentifier());
+            throw new MobileException(MobileExceptionType.UNDEFINED, MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getCapabilitiesIdentifier());
         }
         LOGGER.debug("Driver initiated!!!");
         return appiumDriver;
@@ -122,7 +122,7 @@ public class MobileDriverSvc {
             }
         } catch (WebDriverException e) {
             LOGGER.error(EXCEPTION_WHILE_QUITTING_APPIUM_DRIVER);
-            throw new Exception(ExceptionType.IO_ERROR, EXCEPTION_WHILE_QUITTING_APPIUM_DRIVER);
+            throw new MobileException(MobileExceptionType.IO_ERROR, EXCEPTION_WHILE_QUITTING_APPIUM_DRIVER);
         }
     }
 
