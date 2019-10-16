@@ -11,6 +11,8 @@ public class Properties {
 
     public static final String CAPABILITIES_IDENTIFIER = "capabilities.identifier";
 
+    public static final String MOBILE_PLATFORM = "mobile.platform";
+
     public static final String APPIUM_LOG_LEVEL = "appium.log.level";
     public static final String APPIUM_SERVER_URL = "appium.server.url";
 

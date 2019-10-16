@@ -1,9 +1,6 @@
 package com.gummarajum.automation.automobile.svc;
 
-import com.constants.ELEMENT_DIRECTION;
-import com.constants.LOCATORS;
-import com.constants.SCREEN_DIRECTION;
-import com.constants.UISELECTORS;
+import com.constants.*;
 import com.gummarajum.automation.automobile.Bootstrap;
 import com.gummarajum.automation.automobile.MobileException;
 import com.gummarajum.automation.automobile.MobileExceptionType;
@@ -36,6 +33,7 @@ import java.time.Duration;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
+import static com.constants.Properties.MOBILE_PLATFORM;
 import static com.constants.Properties.SCREENSHOT_PATH;
 import static io.appium.java_client.touch.WaitOptions.waitOptions;
 import static io.appium.java_client.touch.offset.ElementOption.element;
@@ -81,7 +79,6 @@ public class MobileTaskSvc {
     @Autowired
     private DateTimeUtils dateTimeUtils;
 
-
     public AppiumDriver getDriver() {
         if (!sessionEstablished) {
             driver = mobileDriverSvc.driver();
@@ -90,6 +87,12 @@ public class MobileTaskSvc {
         }
         return driver;
     }
+
+    //MOBILE_PLATFORM variable is set during Driver object creation in MobileDriverSvc
+    public boolean isIos() {
+        return stateSvc.getStringVar(MOBILE_PLATFORM).equalsIgnoreCase(PLATFORM.IOS.toString());
+    }
+
 
     public void setImplicitWaitTimeOutSeconds(final Integer seconds) {
         getDriver().manage().timeouts().implicitlyWait(seconds, TimeUnit.SECONDS);
@@ -417,7 +420,7 @@ public class MobileTaskSvc {
                     .until(ExpectedConditions.elementToBeClickable(element));
 
             element.clear();
-            element.sendKeys(textToEnter);
+            element.setValue(textToEnter);
         } catch (java.lang.Exception e) {
             LOGGER.error("Element [{}] is not clickable", element.toString(), e);
             throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Element [{}] is not clickable", element.toString());

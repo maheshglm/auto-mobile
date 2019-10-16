@@ -79,7 +79,7 @@ public class NoteBookActions {
 
             mobileTaskSvc.click(noteBookLocators.notificationRename);
 
-            final String editLocator = formatterUtils.format(noteBookLocators.editNoteBookTitleLocator, existingName);
+            final String editLocator = formatterUtils.format(noteBookLocators.androidEditNoteBookTitleLocator, existingName);
             MobileElement editTextElement = mobileTaskSvc.findElement(By.xpath(editLocator));
 
             mobileTaskSvc.sendKeys(editTextElement, newName);

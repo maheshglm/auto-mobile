@@ -35,6 +35,7 @@ public class ReusableActions {
 
     public void launchJoplinApp() {
         threadSvc.sleepSeconds(1);
+
         if (!mobileTaskSvc.waitTillApplicationIsOpened(NET_COZIC_JOPLIN_MAIN_ACTIVITY, 30)) {
             LOGGER.error("Application with activity id [{}] is not opened!!!", NET_COZIC_JOPLIN_MAIN_ACTIVITY);
             throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Application with activity id [{}] is not opened!!!", NET_COZIC_JOPLIN_MAIN_ACTIVITY);
@@ -60,7 +61,7 @@ public class ReusableActions {
 
     MobileElement getNoteBookElement(final String notebookName) {
         mobileTaskSvc.click(noteBookLocators.menu);
-        final String notebookLocator = formatterUtils.format(noteBookLocators.notebookLocator, notebookName);
+        final String notebookLocator = formatterUtils.format(noteBookLocators.androidNotebookLocator, notebookName);
         LOGGER.debug("Get notebook element with locator [{}]", notebookLocator);
         return mobileTaskSvc.getElementByReference(By.xpath(notebookLocator));
     }

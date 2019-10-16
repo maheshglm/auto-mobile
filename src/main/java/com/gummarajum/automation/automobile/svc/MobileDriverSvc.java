@@ -1,6 +1,7 @@
 package com.gummarajum.automation.automobile.svc;
 
 
+import com.constants.PLATFORM;
 import com.google.common.base.Strings;
 import com.gummarajum.automation.automobile.MobileException;
 import com.gummarajum.automation.automobile.MobileExceptionType;
@@ -26,8 +27,6 @@ public class MobileDriverSvc {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MobileDriverSvc.class);
 
-    private static final String ANDROID = "android";
-    private static final String IOS = "ios";
     private static final String UDID = "udid";
     private static final String MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT = "Mobile platform should be 'ios' or 'android', but not [{}]";
     private static final String EXCEPTION_WHILE_QUITTING_APPIUM_DRIVER = "MobileException while quitting appium driver";
@@ -51,10 +50,10 @@ public class MobileDriverSvc {
     private FormatterUtils formatterUtils;
 
 
-    public String getCapabilitiesIdentifier() {
+    private String getCapabilitiesIdentifier() {
         String platform = System.getProperty(CAPABILITIES_IDENTIFIER);
         if (Strings.isNullOrEmpty(platform)) {
-            return ANDROID;
+            return PLATFORM.ANDROID.toString();
         }
         return platform;
     }
@@ -90,8 +89,7 @@ public class MobileDriverSvc {
         return capabilities;
     }
 
-    public synchronized AppiumDriver driver() {
-
+    synchronized AppiumDriver driver() {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
         if (Strings.isNullOrEmpty(System.getProperty(AWS_EXECUTION))) {
@@ -102,9 +100,11 @@ public class MobileDriverSvc {
         }
 
         AppiumDriver<MobileElement> appiumDriver;
-        if (getCapabilitiesIdentifier().startsWith(ANDROID)) {
+        if (getCapabilitiesIdentifier().toUpperCase().startsWith(PLATFORM.ANDROID.toString())) {
+            stateSvc.setStringVar(MOBILE_PLATFORM, PLATFORM.ANDROID.toString());
             appiumDriver = new AndroidDriver<>(appiumServerUtils.getAppiumServerUrl(), desiredCapabilities);
-        } else if (getCapabilitiesIdentifier().startsWith(IOS)) {
+        } else if (getCapabilitiesIdentifier().startsWith(PLATFORM.IOS.toString())) {
+            stateSvc.setStringVar(MOBILE_PLATFORM, PLATFORM.IOS.toString());
             appiumDriver = new IOSDriver<>(appiumServerUtils.getAppiumServerUrl(), desiredCapabilities);
         } else {
             LOGGER.error(MOBILE_PLATFORM_SHOULD_BE_IOS_OR_ANDROID_BUT_NOT, getCapabilitiesIdentifier());
@@ -114,7 +114,7 @@ public class MobileDriverSvc {
         return appiumDriver;
     }
 
-    public synchronized void quit(AppiumDriver driver) {
+    synchronized void quit(AppiumDriver driver) {
         try {
             if (driver != null) {
                 driver.quit();
@@ -126,8 +126,4 @@ public class MobileDriverSvc {
         }
     }
 
-
-    public synchronized void closeApp(AppiumDriver driver) {
-        driver.closeApp();
-    }
 }
