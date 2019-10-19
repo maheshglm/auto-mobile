@@ -14,16 +14,16 @@ Feature: This feature is to test Joplin Create New Notebook functionality
     Then element "NoteBookLocators.search" should be present
     Then element "NoteBookLocators.sortNotesIcon" should be present
 
-#  Scenario: Rename Notebook name
-#
-#    Given I create a new notebook with name "Test Notebook 2"
-#    Then I expect "Test Notebook 2" notebook created
-#
-#    When I rename the notebook "Test Notebook 2" to "Test Notebook 2 Mod"
-#    Then I expect "Test Notebook 2 Mod" notebook renamed
-#
-#  Scenario: Delete Notebook
-#
-#    Given I create a new notebook with name "Test Notebook 3"
-#    When I delete notebook "Test Notebook 3"
-#    Then I expect notebook "Test Notebook 3" is deleted
+  Scenario: Rename Notebook name
+
+    Given I create a new notebook with name "Test Notebook 2"
+    Then I expect "Test Notebook 2" notebook created
+
+    When I rename the notebook "Test Notebook 2" to "Test Notebook 2 Mod"
+    Then I expect "Test Notebook 2 Mod" notebook renamed
+
+  Scenario: Delete Notebook
+
+    Given I create a new notebook with name "Test Notebook 3"
+    When I delete notebook "Test Notebook 3"
+    Then I expect notebook "Test Notebook 3" is deleted

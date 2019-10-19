@@ -103,7 +103,7 @@ public class MobileDriverSvc {
         if (getCapabilitiesIdentifier().toUpperCase().startsWith(PLATFORM.ANDROID.toString())) {
             stateSvc.setStringVar(MOBILE_PLATFORM, PLATFORM.ANDROID.toString());
             appiumDriver = new AndroidDriver<>(appiumServerUtils.getAppiumServerUrl(), desiredCapabilities);
-        } else if (getCapabilitiesIdentifier().startsWith(PLATFORM.IOS.toString())) {
+        } else if (getCapabilitiesIdentifier().toUpperCase().startsWith(PLATFORM.IOS.toString())) {
             stateSvc.setStringVar(MOBILE_PLATFORM, PLATFORM.IOS.toString());
             appiumDriver = new IOSDriver<>(appiumServerUtils.getAppiumServerUrl(), desiredCapabilities);
         } else {

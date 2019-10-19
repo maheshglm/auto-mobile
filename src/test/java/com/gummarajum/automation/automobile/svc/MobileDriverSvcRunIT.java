@@ -69,7 +69,7 @@ public class MobileDriverSvcRunIT {
 
     @Before
     public void setVariables() {
-        System.setProperty(APPIUM_LOG_LEVEL, "error");
+        System.setProperty(APPIUM_LOG_LEVEL, "debug");
         System.setProperty(APPIUM_SERVER_URL, "http://127.0.0.1:4723/wd/hub");
     }
 
@@ -80,8 +80,8 @@ public class MobileDriverSvcRunIT {
 
     @Test
     public void testJoplin() {
-        System.setProperty(CAPABILITIES_IDENTIFIER, "android_joplin");
-        mobileTaskSvc.getDriver();
+        System.setProperty(CAPABILITIES_IDENTIFIER, "ios_joplin");
+        AppiumDriver driver = mobileTaskSvc.getDriver();
         reusableActions.launchJoplinApp();
         noteBookActions.createNewNoteBook("Test1");
         noteBookActions.verifyNoteBookVisible("Test1");

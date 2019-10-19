@@ -5,6 +5,7 @@ import com.gummarajum.automation.automobile.MobileException;
 import com.gummarajum.automation.automobile.MobileExceptionType;
 import com.gummarajum.automation.automobile.screens.joplin.locators.NoteBookLocators;
 import com.gummarajum.automation.automobile.svc.MobileTaskSvc;
+import com.gummarajum.automation.automobile.svc.StateSvc;
 import com.gummarajum.automation.automobile.svc.ThreadSvc;
 import com.gummarajum.automation.automobile.utils.FormatterUtils;
 import io.appium.java_client.MobileElement;
@@ -19,7 +20,7 @@ public class ReusableActions {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReusableActions.class);
 
-    private static final String NET_COZIC_JOPLIN_MAIN_ACTIVITY = "net.cozic.joplin.MainActivity";
+    private static final String BUNDLE_AND_PACKAGE_ID = "net.cozic.joplin";
 
     @Autowired
     private MobileTaskSvc mobileTaskSvc;
@@ -33,14 +34,17 @@ public class ReusableActions {
     @Autowired
     private ThreadSvc threadSvc;
 
+    @Autowired
+    private StateSvc stateSvc;
+
     public void launchJoplinApp() {
         threadSvc.sleepSeconds(1);
 
-        if (!mobileTaskSvc.waitTillApplicationIsOpened(NET_COZIC_JOPLIN_MAIN_ACTIVITY, 30)) {
-            LOGGER.error("Application with activity id [{}] is not opened!!!", NET_COZIC_JOPLIN_MAIN_ACTIVITY);
-            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Application with activity id [{}] is not opened!!!", NET_COZIC_JOPLIN_MAIN_ACTIVITY);
+        if (!mobileTaskSvc.waitTillApplicationIsOpened(BUNDLE_AND_PACKAGE_ID, 30)) {
+            LOGGER.error("Application with bundle or Package id [{}] is not opened!!!", BUNDLE_AND_PACKAGE_ID);
+            throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Application with activity id [{}] is not opened!!!", BUNDLE_AND_PACKAGE_ID);
         } else {
-            LOGGER.debug("Application with Activity id [{}] is opened.", NET_COZIC_JOPLIN_MAIN_ACTIVITY);
+            LOGGER.debug("Application with bundle or Package id [{}] is opened.", BUNDLE_AND_PACKAGE_ID);
         }
     }
 
@@ -50,7 +54,9 @@ public class ReusableActions {
 
     void verifyNotificationMessageText(final String expectedMessage) {
         LOGGER.debug("Verification of Notification message [{}]", expectedMessage);
-        final String notificationMessage = mobileTaskSvc.getAttribute(noteBookLocators.notificationText, "text")
+
+
+        String notificationMessage = mobileTaskSvc.getAttribute(noteBookLocators.notificationText, mobileTaskSvc.isIos() ? "value" : "text")
                 .replace("\n\n", " ");
 
         if (!expectedMessage.equals(notificationMessage)) {
@@ -60,8 +66,19 @@ public class ReusableActions {
     }
 
     MobileElement getNoteBookElement(final String notebookName) {
+        if (!noteBookLocators.menu.isDisplayed()) {
+            this.escapeMenuScreen();
+        }
         mobileTaskSvc.click(noteBookLocators.menu);
-        final String notebookLocator = formatterUtils.format(noteBookLocators.androidNotebookLocator, notebookName);
+        String notebookLocator;
+
+        if (mobileTaskSvc.isIos()) {
+            notebookLocator = formatterUtils.format(noteBookLocators.iosNotebookLocator, notebookName);
+        } else {
+            notebookLocator = formatterUtils.format(noteBookLocators.androidNotebookLocator, notebookName);
+        }
+
+
         LOGGER.debug("Get notebook element with locator [{}]", notebookLocator);
         return mobileTaskSvc.getElementByReference(By.xpath(notebookLocator));
     }

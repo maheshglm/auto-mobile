@@ -79,7 +79,13 @@ public class NoteBookActions {
 
             mobileTaskSvc.click(noteBookLocators.notificationRename);
 
-            final String editLocator = formatterUtils.format(noteBookLocators.androidEditNoteBookTitleLocator, existingName);
+            String editLocator;
+            if (mobileTaskSvc.isIos()) {
+                editLocator = formatterUtils.format(noteBookLocators.iosEditNoteBookTitleLocator, existingName);
+            } else {
+                editLocator = formatterUtils.format(noteBookLocators.androidEditNoteBookTitleLocator, existingName);
+            }
+
             MobileElement editTextElement = mobileTaskSvc.findElement(By.xpath(editLocator));
 
             mobileTaskSvc.sendKeys(editTextElement, newName);
@@ -104,7 +110,7 @@ public class NoteBookActions {
 
             reusableActions.verifyNotificationMessageText(formatterUtils.format(CONFIRM_DELETE_TEXT, notebookName));
 
-            mobileTaskSvc.click(noteBookLocators.notificationCancel);
+            mobileTaskSvc.click(noteBookLocators.notificationOk);
         } else {
             reusableActions.escapeMenuScreen();
             LOGGER.warn("Notebook [{}] not available to delete!!!", notebookName);

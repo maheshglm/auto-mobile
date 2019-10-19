@@ -13,6 +13,7 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
+import io.appium.java_client.appmanagement.ApplicationState;
 import io.appium.java_client.touch.LongPressOptions;
 import io.appium.java_client.touch.TapOptions;
 import io.appium.java_client.touch.WaitOptions;
@@ -45,8 +46,8 @@ import static java.time.Duration.ofSeconds;
 public class MobileTaskSvc {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MobileTaskSvc.class);
-    public static final String ELEMENT_IS_NOT_VISIBLE = "Element [{}] is not visible";
 
+    private static final String ELEMENT_IS_NOT_VISIBLE = "Element [{}] is not visible";
     public static final Integer DEFAULT_IMPLICIT_TIMEOUT = 10;
     private Hashtable<String, Integer> namePrefices = new Hashtable<>();
     private AppiumDriver driver;
@@ -515,22 +516,19 @@ public class MobileTaskSvc {
     }
 
 
-    public boolean waitTillApplicationIsOpened(final String activityId, final Integer maxTimeOutInSeconds) {
+    public boolean waitTillApplicationIsOpened(final String bundleIdOrPackageId, final Integer maxTimeOutInSeconds) {
         long millisStart = dateTimeUtils.currentTimeMillis();
         long millisCurrent = millisStart;
 
-        String foregroundActivity = adbUtils.getForegroundActivity();
-        while ((millisCurrent - millisStart) / 1000 <= maxTimeOutInSeconds) {
-            if (foregroundActivity.contains(activityId)) {
-                return true;
-            }
+        boolean isAppRunningInForeGround = this.isAppRunningInForeGround(bundleIdOrPackageId);
+        while (!isAppRunningInForeGround && (millisCurrent - millisStart) / 1000 <= maxTimeOutInSeconds) {
             LOGGER.warn("App is not opened Yet, Launching App...");
             this.launchApp();
             threadSvc.sleepSeconds(2);
-            foregroundActivity = adbUtils.getForegroundActivity();
+            isAppRunningInForeGround = this.isAppRunningInForeGround(bundleIdOrPackageId);
             millisCurrent = dateTimeUtils.currentTimeMillis();
         }
-        return false;
+        return isAppRunningInForeGround;
     }
 
     public MobileElement getElementByReference(final By by, final Integer maxPollingTime) {
@@ -557,6 +555,16 @@ public class MobileTaskSvc {
             return element.getAttribute(attribute);
         }
         return "";
+    }
+
+    private boolean isAppRunningInForeGround(final String bundleIdOrPackageId) {
+        try {
+            final String name = getDriver().queryAppState(bundleIdOrPackageId).name();
+            LOGGER.debug("App [{}] status [{}]", bundleIdOrPackageId, name);
+            return name.equals("RUNNING_IN_FOREGROUND");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 

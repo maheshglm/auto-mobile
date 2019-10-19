@@ -112,6 +112,7 @@ public class WebSteps {
             LOGGER.error("Page Object Element [{}] does not exist", expandPageObjectElement);
             throw new MobileException(MobileExceptionType.VERIFICATION_FAILED, "Page Object Element [{}] does not exist", expandPageObjectElement);
         }
+        LOGGER.info(expandPageObjectElement + " is present");
         scenarioUtils.write(expandPageObjectElement + " is present");
 
     }
