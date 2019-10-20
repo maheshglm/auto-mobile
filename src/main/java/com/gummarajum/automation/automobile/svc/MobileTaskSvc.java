@@ -13,7 +13,6 @@ import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
-import io.appium.java_client.appmanagement.ApplicationState;
 import io.appium.java_client.touch.LongPressOptions;
 import io.appium.java_client.touch.TapOptions;
 import io.appium.java_client.touch.WaitOptions;
@@ -32,6 +31,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.time.Duration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.constants.Properties.MOBILE_PLATFORM;
@@ -354,6 +354,15 @@ public class MobileTaskSvc {
         }
     }
 
+    public List<MobileElement> findElements(final By by) {
+        try {
+            return getDriver().findElements(by);
+        } catch (Exception e) {
+            LOGGER.error("Exception while finding element with By [{}]", by.toString(), e);
+            throw new MobileException(MobileExceptionType.VALIDATION_FAILED, "Exception while finding element with By [{}]", by.toString());
+        }
+    }
+
     public MobileElement getElementByReference(final By by) {
         try {
             return (MobileElement) getDriver().findElement(by);
@@ -389,19 +398,25 @@ public class MobileTaskSvc {
         getDriver().launchApp();
     }
 
-    public void clickIfVisible(MobileElement element, Integer timeOutInSeconds) {
-        if (this.waitTillElementIsPresent(element, timeOutInSeconds))
-            this.click(element);
+    public void click(MobileElement element) {
+        this.click(element, 0);
     }
 
     public void click(final By by) {
         MobileElement element = this.findElement(by);
-        this.click(element);
+        this.click(element, 10);
     }
 
-    public void click(MobileElement element) {
+    public void clickIfVisible(final By by) {
+        MobileElement element = this.findElement(by);
+        if (element.isEnabled() && element.isDisplayed()) {
+            element.click();
+        }
+    }
+
+    public void click(MobileElement element, final Integer timeOutInSeconds) {
         try {
-            getWebDriverWait(30)
+            getWebDriverWait(timeOutInSeconds)
                     .ignoring(NoSuchElementException.class)
                     .ignoring(StaleElementReferenceException.class)
                     .until(ExpectedConditions.elementToBeClickable(element));

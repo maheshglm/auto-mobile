@@ -55,7 +55,6 @@ public class ReusableActions {
     void verifyNotificationMessageText(final String expectedMessage) {
         LOGGER.debug("Verification of Notification message [{}]", expectedMessage);
 
-
         String notificationMessage = mobileTaskSvc.getAttribute(noteBookLocators.notificationText, mobileTaskSvc.isIos() ? "value" : "text")
                 .replace("\n\n", " ");
 
@@ -73,14 +72,42 @@ public class ReusableActions {
         String notebookLocator;
 
         if (mobileTaskSvc.isIos()) {
-            notebookLocator = formatterUtils.format(noteBookLocators.iosNotebookLocator, notebookName);
+            notebookLocator = formatterUtils.format(noteBookLocators.iNotebookLocator, notebookName);
         } else {
-            notebookLocator = formatterUtils.format(noteBookLocators.androidNotebookLocator, notebookName);
+            notebookLocator = formatterUtils.format(noteBookLocators.aNotebookLocator, notebookName);
         }
-
 
         LOGGER.debug("Get notebook element with locator [{}]", notebookLocator);
         return mobileTaskSvc.getElementByReference(By.xpath(notebookLocator));
     }
+
+    void selectNotebook(final String notebookName) {
+        MobileElement noteBookElement = getNoteBookElement(notebookName);
+        mobileTaskSvc.click(noteBookElement);
+    }
+
+    void selectNote(final String notebookName, final String noteTitle) {
+        this.selectNotebook(notebookName);
+        String noteLocator;
+
+        if (!mobileTaskSvc.isIos()) {
+            noteLocator = formatterUtils.format(noteBookLocators.aNoteLocator, noteTitle);
+        } else {
+            noteLocator = "WIP";
+        }
+        mobileTaskSvc.click(By.xpath(noteLocator));
+    }
+
+    void goBackFromNotes(final String notebookName) {
+        final String backLocator = mobileTaskSvc.isIos()
+                ? "WIP"
+                : formatterUtils.format(noteBookLocators.aCreateNoteBackBtnLocator, notebookName);
+
+        mobileTaskSvc.clickIfVisible(By.xpath(backLocator));
+        mobileTaskSvc.clickIfVisible(By.xpath(backLocator));
+    }
+
+
+
 
 }

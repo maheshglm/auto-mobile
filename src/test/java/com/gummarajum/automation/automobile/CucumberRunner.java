@@ -9,8 +9,8 @@ public class CucumberRunner extends BaseRunner {
     @Test
     public void testCucumber() {
         System.setProperty(APPIUM_SERVER_URL, "http://127.0.0.1:4723/wd/hub");
-        //System.setProperty(CAPABILITIES_IDENTIFIER,"android_joplin");
-        System.setProperty(CAPABILITIES_IDENTIFIER,"ios_joplin");
+        System.setProperty(CAPABILITIES_IDENTIFIER,"android_joplin");
+        //System.setProperty(CAPABILITIES_IDENTIFIER,"ios_joplin");
         cucumber.api.cli.Main.run(cucumberOptions, Thread.currentThread().getContextClassLoader());
     }
 

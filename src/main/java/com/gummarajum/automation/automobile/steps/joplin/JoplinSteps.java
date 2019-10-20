@@ -5,11 +5,14 @@ import com.gummarajum.automation.automobile.screens.joplin.actions.ReusableActio
 import com.gummarajum.automation.automobile.svc.MobileTaskSvc;
 import com.gummarajum.automation.automobile.svc.StateSvc;
 import com.gummarajum.automation.automobile.utils.AdbUtils;
+import io.cucumber.datatable.DataTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class JoplinSteps {
@@ -57,5 +60,38 @@ public class JoplinSteps {
         noteBookActions.verifyNoteBookNotAvailable(stateSvc.expandExpression(notebookName));
     }
 
+    public void addNewNote(final String notebookName, List<String> list) {
+        final String expandNoteBook = stateSvc.expandExpression(notebookName);
+        final String title = stateSvc.expandExpression(list.get(0));
+        final String body = stateSvc.expandExpression(list.get(1));
+        noteBookActions.addNote(expandNoteBook, title, body);
+    }
+
+    public void verifyNoteAvailable(final String notebookName, List<String> list) {
+        final String expandNoteBook = stateSvc.expandExpression(notebookName);
+        final String title = stateSvc.expandExpression(list.get(0));
+        final String body = stateSvc.expandExpression(list.get(1));
+        noteBookActions.verifyNoteIsAvailable(expandNoteBook, title, body);
+    }
+
+    public void moveNote(final String noteTitle, final String fromNoteBook, final String toNoteBook) {
+        final String expandTitle = stateSvc.expandExpression(noteTitle);
+        final String expandFromNoteBook = stateSvc.expandExpression(fromNoteBook);
+        final String expandToNoteBook = stateSvc.expandExpression(toNoteBook);
+        noteBookActions.moveNote(expandTitle, expandFromNoteBook, expandToNoteBook);
+    }
+
+    public void verifyNoteNotAvailable(final String notebookName, final String title) {
+        final String expandNoteBook = stateSvc.expandExpression(notebookName);
+        final String expandTitle = stateSvc.expandExpression(title);
+        noteBookActions.verifyNoteIsNotAvailable(expandNoteBook, expandTitle);
+    }
+
+    public void deleteNote(final String notebookName, final String title) {
+        final String expandNoteBook = stateSvc.expandExpression(notebookName);
+        final String expandTitle = stateSvc.expandExpression(title);
+
+        noteBookActions.deleteNote(expandNoteBook, expandTitle);
+    }
 
 }

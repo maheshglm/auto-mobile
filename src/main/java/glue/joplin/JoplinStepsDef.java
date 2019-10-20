@@ -2,11 +2,18 @@ package glue.joplin;
 
 import com.gummarajum.automation.automobile.Bootstrap;
 import com.gummarajum.automation.automobile.steps.joplin.JoplinSteps;
+import com.gummarajum.automation.automobile.svc.DataTableSvc;
 import cucumber.api.java8.En;
+import io.cucumber.datatable.DataTable;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class JoplinStepsDef implements En {
 
     private JoplinSteps steps = (JoplinSteps) Bootstrap.getBean(JoplinSteps.class);
+    private DataTableSvc dataTableSvc = (DataTableSvc) Bootstrap.getBean(DataTableSvc.class);
 
     public JoplinStepsDef() {
 
@@ -14,12 +21,12 @@ public class JoplinStepsDef implements En {
             steps.launchJoplinApplication();
         });
 
-        Given("I delete notebook {string}", (String notebookName) -> {
-            steps.deleteNoteBook(notebookName);
-        });
-
         When("I create a new notebook with name {string}", (String notebookName) -> {
             steps.createNewNoteBook(notebookName);
+        });
+
+        Given("I delete notebook {string}", (String notebookName) -> {
+            steps.deleteNoteBook(notebookName);
         });
 
         Then("I rename the notebook {string} to {string}", (String notebookName, String newName) -> {
@@ -34,99 +41,28 @@ public class JoplinStepsDef implements En {
             steps.verifyNoteBookNotAvailable(notebookName);
         });
 
+        When("I add a new note with below params under notebook {string}", (String notebookName, DataTable dataTable) -> {
+            Map<String, String> map = dataTableSvc.getTwoColumnsAsMap(dataTable);
+            steps.addNewNote(notebookName, Arrays.asList(map.get("Title"), map.get("Body")));
+        });
 
-//
-//        When("I add a new note with below params", (io.cucumber.datatable.DataTable dataTable) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            // For automatic transformation, change DataTable to one of
-//            // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-//            // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-//            // Double, Byte, Short, Long, BigInteger or BigDecimal.
-//            //
-//            // For other transformations you can register a DataTableType.
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I expect a new note with below params is added successfully", (io.cucumber.datatable.DataTable dataTable) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            // For automatic transformation, change DataTable to one of
-//            // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-//            // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-//            // Double, Byte, Short, Long, BigInteger or BigDecimal.
-//            //
-//            // For other transformations you can register a DataTableType.
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Given("I have a notebook {string}", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I modify a new note with below params", (io.cucumber.datatable.DataTable dataTable) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            // For automatic transformation, change DataTable to one of
-//            // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-//            // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-//            // Double, Byte, Short, Long, BigInteger or BigDecimal.
-//            //
-//            // For other transformations you can register a DataTableType.
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Given("I add a new note with below params", (io.cucumber.datatable.DataTable dataTable) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            // For automatic transformation, change DataTable to one of
-//            // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-//            // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-//            // Double, Byte, Short, Long, BigInteger or BigDecimal.
-//            //
-//            // For other transformations you can register a DataTableType.
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        When("I delete a note with title {string}", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I expect note with title {string} should be deleted", (String string) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        When("I move below note from {string} to {string}", (String string, String string2, io.cucumber.datatable.DataTable dataTable) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            // For automatic transformation, change DataTable to one of
-//            // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-//            // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-//            // Double, Byte, Short, Long, BigInteger or BigDecimal.
-//            //
-//            // For other transformations you can register a DataTableType.
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I expect below note is moved to {string}", (String string, io.cucumber.datatable.DataTable dataTable) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            // For automatic transformation, change DataTable to one of
-//            // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-//            // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-//            // Double, Byte, Short, Long, BigInteger or BigDecimal.
-//            //
-//            // For other transformations you can register a DataTableType.
-//            throw new cucumber.api.PendingException();
-//        });
-//
-//        Then("I expect below note does not exist under {string}", (String string, io.cucumber.datatable.DataTable dataTable) -> {
-//            // Write code here that turns the phrase above into concrete actions
-//            // For automatic transformation, change DataTable to one of
-//            // E, List<E>, List<List<E>>, List<Map<K,V>>, Map<K,V> or
-//            // Map<K, List<V>>. E,K,V must be a String, Integer, Float,
-//            // Double, Byte, Short, Long, BigInteger or BigDecimal.
-//            //
-//            // For other transformations you can register a DataTableType.
-//            throw new cucumber.api.PendingException();
-//        });
+        Then("I expect a new note available under notebook {string}", (String notebookName, DataTable dataTable) -> {
+            Map<String, String> map = dataTableSvc.getTwoColumnsAsMap(dataTable);
+            steps.verifyNoteAvailable(notebookName, Arrays.asList(map.get("Title"), map.get("Body")));
+        });
+
+        Then("I move note with title {string} from {string} to {string}", (String noteTitle, String fromNoteBook, String toNoteBook) -> {
+            steps.moveNote(noteTitle, fromNoteBook, toNoteBook);
+        });
+
+        Then("I expect note with title {string} should not be available under notebook {string}", (String noteTitle, String noteBookName) -> {
+            steps.verifyNoteNotAvailable(noteBookName, noteTitle);
+        });
+
+
+        Then("I delete a note with title {string} under notebook {string}", (String noteTitle, String noteBookName) -> {
+            steps.deleteNote(noteBookName, noteTitle);
+        });
 
 
     }

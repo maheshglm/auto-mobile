@@ -7,13 +7,14 @@ import com.gummarajum.automation.automobile.TestConfig;
 import com.gummarajum.automation.automobile.screens.joplin.actions.NoteBookActions;
 import com.gummarajum.automation.automobile.screens.joplin.actions.ReusableActions;
 import com.gummarajum.automation.automobile.screens.joplin.locators.NoteBookLocators;
-import com.gummarajum.automation.automobile.screens.lazada.actions.HomeScreen;
-import com.gummarajum.automation.automobile.screens.lazada.actions.SearchResultsScreen;
 import com.gummarajum.automation.automobile.utils.AdbUtils;
 import com.gummarajum.automation.automobile.utils.AppiumServerUtils;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.constants.Properties.APPIUM_LOG_LEVEL;
-import static com.constants.Properties.APPIUM_SERVER_URL;
-import static com.constants.Properties.CAPABILITIES_IDENTIFIER;
+import static com.constants.Properties.*;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = Config.class)
@@ -42,15 +41,6 @@ public class MobileDriverSvcRunIT {
 
     @Autowired
     private MobileTaskSvc mobileTaskSvc;
-
-    @Lazy
-    @Autowired
-    private HomeScreen homeScreen;
-
-    @Lazy
-    @Autowired
-    private SearchResultsScreen searchResultsScreen;
-
 
     @Lazy
     @Autowired
@@ -153,21 +143,6 @@ public class MobileDriverSvcRunIT {
             mobileTaskSvc.quitDriver();
         }
 
-    }
-
-    @Ignore
-    @Test
-    public void test() {
-        try {
-            //appiumServerUtils.startServer();
-            AppiumDriver driver = mobileTaskSvc.getDriver();
-
-            homeScreen.searchLazadaForAnItem("apple laptop");
-
-        } finally {
-            mobileTaskSvc.quitDriver();
-            //appiumServerUtils.stopServer();
-        }
     }
 
 
