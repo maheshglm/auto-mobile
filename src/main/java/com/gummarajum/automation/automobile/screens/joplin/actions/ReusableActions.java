@@ -37,6 +37,7 @@ public class ReusableActions {
     @Autowired
     private StateSvc stateSvc;
 
+
     public void launchJoplinApp() {
         threadSvc.sleepSeconds(1);
 
@@ -106,8 +107,4 @@ public class ReusableActions {
         mobileTaskSvc.clickIfVisible(By.xpath(backLocator));
         mobileTaskSvc.clickIfVisible(By.xpath(backLocator));
     }
-
-
-
-
 }

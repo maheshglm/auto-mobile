@@ -64,6 +64,14 @@ public class JoplinStepsDef implements En {
             steps.deleteNote(noteBookName, noteTitle);
         });
 
+        When("I navigate to Configuration screen", () -> {
+            steps.navigateToConfiguration();
+        });
+
+        Then("I verify Configuration {string} is set to {string}", (String configElement, String expectedValue) -> {
+            steps.verifyConfigurationValue(configElement, expectedValue);
+        });
+
 
     }
 }

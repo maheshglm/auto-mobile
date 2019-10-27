@@ -244,6 +244,32 @@ public class MobileTaskSvc {
         return element;
     }
 
+
+    public boolean isElementVisible(final MobileElement element) {
+        try {
+            return element != null && element.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public MobileElement scrollElementIntoView(final MobileElement mobileElement) {
+        try {
+            this.setImplicitWaitTimeOutSeconds(1);
+            while (true) {
+                if (isElementVisible(mobileElement)) {
+                    return mobileElement;
+                } else {
+                    this.swipeScreen(SCREEN_DIRECTION.DOWN, 1000);
+                    threadSvc.sleepMillis(1000);
+                }
+            }
+        } finally {
+            this.setImplicitWaitTimeOutSeconds(DEFAULT_IMPLICIT_TIMEOUT);
+        }
+    }
+
+
     public void swipeElement(MobileElement element, ELEMENT_DIRECTION direction, long duration) {
         GetXY elementXY = this.getElementXY(element);
         Dimension size = this.getDriver().manage().window().getSize();
@@ -422,7 +448,7 @@ public class MobileTaskSvc {
                     .until(ExpectedConditions.elementToBeClickable(element));
 
             element.click();
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Element [{}] is not clickable", element.toString(), e);
             throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Element [{}] is not clickable", element.toString());
         }
@@ -437,7 +463,7 @@ public class MobileTaskSvc {
 
             element.clear();
             element.setValue(textToEnter);
-        } catch (java.lang.Exception e) {
+        } catch (Exception e) {
             LOGGER.error("Element [{}] is not clickable", element.toString(), e);
             throw new MobileException(MobileExceptionType.PROCESSING_FAILED, "Element [{}] is not clickable", element.toString());
         }
@@ -579,6 +605,20 @@ public class MobileTaskSvc {
             return name.equals("RUNNING_IN_FOREGROUND");
         } catch (Exception e) {
             return false;
+        }
+    }
+
+
+    public void setSliderValue(final MobileElement sliderElement, final Integer newValue, final Integer maxValue) {
+        if (isIos()) {
+            double fraction = newValue / maxValue;
+            this.sendKeys(sliderElement, String.valueOf(fraction));
+        }
+    }
+
+    public void setSliderValue(final MobileElement sliderElement, final double fraction) {
+        if (isIos()) {
+            this.sendKeys(sliderElement, String.valueOf(fraction));
         }
     }
 

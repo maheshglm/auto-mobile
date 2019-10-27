@@ -1,7 +1,9 @@
 package com.gummarajum.automation.automobile.steps.joplin;
 
 import com.gummarajum.automation.automobile.screens.joplin.actions.NoteBookActions;
+import com.gummarajum.automation.automobile.screens.joplin.actions.NoteBookConfigurationActions;
 import com.gummarajum.automation.automobile.screens.joplin.actions.ReusableActions;
+import com.gummarajum.automation.automobile.screens.joplin.locators.NoteBookConfigurationLocators;
 import com.gummarajum.automation.automobile.svc.MobileTaskSvc;
 import com.gummarajum.automation.automobile.svc.StateSvc;
 import com.gummarajum.automation.automobile.utils.AdbUtils;
@@ -23,6 +25,10 @@ public class JoplinSteps {
     @Autowired
     private NoteBookActions noteBookActions;
 
+    @Lazy
+    @Autowired
+    private NoteBookConfigurationActions noteBookConfigurationActions;
+
     @Autowired
     private ReusableActions reusableActions;
 
@@ -37,7 +43,11 @@ public class JoplinSteps {
 
 
     public void launchJoplinApplication() {
-        reusableActions.launchJoplinApp();
+        noteBookActions.launchJoplinApp();
+    }
+
+    public void navigateToConfiguration() {
+        noteBookActions.navigateToConfiguration();
     }
 
     public void createNewNoteBook(final String notebookName) {
@@ -92,6 +102,11 @@ public class JoplinSteps {
         final String expandTitle = stateSvc.expandExpression(title);
 
         noteBookActions.deleteNote(expandNoteBook, expandTitle);
+    }
+
+    public void verifyConfigurationValue(final String configurationElement, final String expectedValue) {
+        final String expandExpectedVal = stateSvc.expandExpression(expectedValue);
+        noteBookConfigurationActions.verifyConfigurationValue(configurationElement, expandExpectedVal);
     }
 
 }

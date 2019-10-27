@@ -51,6 +51,15 @@ public class NoteBookActions {
         PageFactory.initElements(new AppiumFieldDecorator(mobileTaskSvc.getDriver()), noteBookLocators);
     }
 
+    public void launchJoplinApp() {
+        reusableActions.launchJoplinApp();
+    }
+
+    public void navigateToConfiguration() {
+        mobileTaskSvc.click(noteBookLocators.menu);
+        mobileTaskSvc.click(noteBookLocators.configuration);
+    }
+
     public void createNewNoteBook(final String notebookName) {
         LOGGER.debug("Creation of Notebook [{}]", notebookName);
         mobileTaskSvc.click(noteBookLocators.menu);

@@ -48,7 +48,6 @@ public class NoteBookLocators {
     @AndroidFindBy(xpath = "//android.widget.TextView[@text='There are currently no notes. Create one by clicking on the (+) button.']")
     public MobileElement newNoteBookDefaultMessage;
 
-
     @iOSFindBy(xpath = "//XCUIElementTypeAlert//XCUIElementTypeStaticText")
     @AndroidFindBy(id = "android:id/message")
     public MobileElement notificationText;
@@ -115,6 +114,14 @@ public class NoteBookLocators {
     @AndroidFindBy(xpath = "//android.widget.TextView[@text='OK']")
     public MobileElement deleteNoteOk;
 
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text='Set alarm']")
+    public MobileElement setAlarm;
+
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text='Convert to note']")
+    public MobileElement convertToNote;
+
+    @AndroidFindBy(xpath = "//android.widget.ImageView")
+    public MobileElement datePickerImage;
 
     //Dynamic Locators
     public String aNotebookLocator = "//android.widget.ScrollView[@index='0']//android.widget.TextView[contains(@text,'%s')]";
@@ -127,7 +134,6 @@ public class NoteBookLocators {
     public String aEditNoteBodyLocator = "//android.view.View[@text='%s']";
 
     public String aMoveNoteNotebookLocator = "//android.widget.TextView[contains(@text,'%s')]";
-
 
     public String iNotebookLocator = "(//XCUIElementTypeOther[@name=\"%s\"])[1]";
     public String iEditNoteBookTitleLocator = "//XCUIElementTypeTextField[@value='%s']";
