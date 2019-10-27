@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.gummarajum.automation.automobile.MobileException;
 import com.gummarajum.automation.automobile.MobileExceptionType;
 import com.gummarajum.automation.automobile.svc.StateSvc;
+import com.gummarajum.automation.automobile.svc.ThreadSvc;
 import com.gummarajum.automation.automobile.utils.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,9 @@ public class ConfigSteps {
 
     @Autowired
     private DateTimeUtils dateTimeUtils;
+
+    @Autowired
+    private ThreadSvc threadSvc;
 
 
     public void assignValueToVariable(final String value, final String variable) {
@@ -45,4 +49,8 @@ public class ConfigSteps {
         this.assignValueToVariable(dateTimeUtils.getTimeStamp(format), targetVariable);
     }
 
+
+    public void sleep(final Integer seconds){
+        threadSvc.sleepSeconds(seconds);
+    }
 }

@@ -72,6 +72,26 @@ public class JoplinStepsDef implements En {
             steps.verifyConfigurationValue(configElement, expectedValue);
         });
 
+        When("I set Configuration language to {string}", (String value) -> {
+            steps.setConfigurationDropDownValue("language", value);
+        });
+
+        When("I set Configuration dateFormat to {string}", (String value) -> {
+            steps.setConfigurationDropDownValue("dateFormat", value);
+        });
+
+        When("I set Configuration maxConcurrentConnections_setValue to {string}", (String value) -> {
+            steps.setConfigurationSeekBar("maxConcurrentConnections_setValue", value);
+        });
+
+        When("I set Configuration enableSoftBreaks to {string}", (String value) -> {
+            steps.setConfigurationSwitch("enableSoftBreaks", value);
+        });
+
+        When("I set Configuration saveGeoLocationWithNotes to {string}", (String value) -> {
+            steps.setConfigurationSwitch("saveGeoLocationWithNotes", value);
+        });
+
 
     }
 }

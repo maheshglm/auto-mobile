@@ -2,9 +2,8 @@ package com.gummarajum.automation.automobile.screens.joplin.locators;
 
 import io.appium.java_client.MobileElement;
 import io.appium.java_client.pagefactory.AndroidFindBy;
-import org.springframework.stereotype.Component;
-
 import io.appium.java_client.pagefactory.iOSFindBy;
+import org.springframework.stereotype.Component;
 
 @Component
 public class NoteBookConfigurationLocators {
@@ -47,6 +46,9 @@ public class NoteBookConfigurationLocators {
 
     @AndroidFindBy(xpath = "//android.widget.TextView[@text='Sync status (synced items / total items)']")
     public MobileElement syncStatusLabel;
+
+
+    public String dropDownValue = "//android.widget.ScrollView//android.widget.TextView[@text='%s']";
 
 
 }

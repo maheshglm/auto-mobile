@@ -27,6 +27,8 @@ public class ConfigStepsDef implements En {
             steps.assignFormattedValueToVariable(dateFormat, targetVariable);
         });
 
-
+        When("I pause for {int} seconds", (Integer seconds) -> {
+            steps.sleep(seconds);
+        });
     }
 }

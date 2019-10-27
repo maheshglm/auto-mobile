@@ -109,4 +109,17 @@ public class JoplinSteps {
         noteBookConfigurationActions.verifyConfigurationValue(configurationElement, expandExpectedVal);
     }
 
+
+    public void setConfigurationDropDownValue(final String configurationElement, final String value) {
+        noteBookConfigurationActions.setConfigDropdownValue(configurationElement, value);
+    }
+
+    public void setConfigurationSeekBar(final String configurationElement, final String value) {
+        noteBookConfigurationActions.setConfigSeekBar(configurationElement, value);
+    }
+
+    public void setConfigurationSwitch(final String configurationElement, final String value) {
+        noteBookConfigurationActions.setConfigSwitch(configurationElement, value);
+    }
+
 }

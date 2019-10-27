@@ -120,8 +120,16 @@ public class NoteBookLocators {
     @AndroidFindBy(xpath = "//android.widget.TextView[@text='Convert to note']")
     public MobileElement convertToNote;
 
-    @AndroidFindBy(xpath = "//android.widget.ImageView")
+    @AndroidFindBy(xpath = "//android.widget.TextView[@text='Select date']/../../android.widget.ImageView")
     public MobileElement datePickerImage;
+
+    @AndroidFindBy(id = "android:id/date_picker_header_year")
+    public MobileElement YearPickerIcon;
+
+    public String yearPicker = "//android.widget.TextView[contains(@resource-id,'text1')][@text='%s']";
+    public String datePicker = "//android.view.View[@text='%s']";
+
+    
 
     //Dynamic Locators
     public String aNotebookLocator = "//android.widget.ScrollView[@index='0']//android.widget.TextView[contains(@text,'%s')]";

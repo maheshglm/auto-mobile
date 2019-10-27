@@ -19,6 +19,8 @@ import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.ElementOption;
 import io.appium.java_client.touch.offset.PointOption;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.internal.Coordinates;
+import org.openqa.selenium.interactions.internal.Locatable;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -160,6 +162,12 @@ public class MobileTaskSvc {
                 .perform();
     }
 
+    public void moveMouseToElement(final MobileElement element) {
+        Rectangle rect = element.getRect();
+        getTouchAction().moveTo(PointOption.point(rect.x, rect.y)).waitAction(waitOptions(ofSeconds(2)));
+        threadSvc.sleepMillis(1000);
+    }
+
     public void longPress(final MobileElement mobileElement) {
         getTouchAction().longPress(LongPressOptions.longPressOptions()
                 .withElement(ElementOption.element(mobileElement)))
@@ -234,10 +242,20 @@ public class MobileTaskSvc {
         }
     }
 
-    public MobileElement scrollElementIntoView(final By by, final long swipeDownDuration) {
+    public MobileElement scrollElementIntoView(final By by, final long swipeDownDurationMills) {
         MobileElement element = this.getElementByReference(by);
         while (element == null) {
-            this.swipeScreen(SCREEN_DIRECTION.DOWN, swipeDownDuration);
+            this.swipeScreen(SCREEN_DIRECTION.DOWN, swipeDownDurationMills);
+            threadSvc.sleepSeconds(1);
+            element = this.getElementByReference(by);
+        }
+        return element;
+    }
+
+    public MobileElement scrollElementIntoView(final By by, final double offset, final long swipeDownDurationMills) {
+        MobileElement element = this.getElementByReference(by);
+        while (element == null) {
+            this.swipeScreen(SCREEN_DIRECTION.DOWN, offset, swipeDownDurationMills);
             threadSvc.sleepSeconds(1);
             element = this.getElementByReference(by);
         }
@@ -291,6 +309,43 @@ public class MobileTaskSvc {
                 .moveTo(PointOption.point(endPoint, elementXY.getY()))
                 .release()
                 .perform();
+    }
+
+
+    public void swipeScreen(SCREEN_DIRECTION direction, double offsetPercentage, long durationInMilliSeconds) {
+        Dimension size = getDriver().manage().window().getSize();
+
+        int startX = 0;
+        int endX = 0;
+        int startY = 0;
+        int endY = 0;
+
+        switch (direction) {
+
+            case DOWN:
+                startY = (int) (size.height * 0.80);
+                endY = (int) (size.height * 0.20);
+                startX = (int) (size.width * offsetPercentage);
+                getTouchAction()
+                        .press(PointOption.point(startX, startY))
+                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(durationInMilliSeconds)))
+                        .moveTo(PointOption.point(startX, endY))
+                        .release()
+                        .perform();
+                break;
+
+            case UP:
+                startY = (int) (size.height * 0.30);
+                startX = (int) (size.width * offsetPercentage);
+                getTouchAction()
+                        .press(PointOption.point(startX, startY))
+                        .waitAction(WaitOptions.waitOptions(Duration.ofMillis(durationInMilliSeconds)))
+                        .moveTo(PointOption.point(endX, startY))
+                        .release()
+                        .perform();
+                break;
+
+        }
     }
 
 
@@ -610,19 +665,13 @@ public class MobileTaskSvc {
 
 
     public void setSliderValue(final MobileElement sliderElement, final Integer newValue, final Integer maxValue) {
-        if (isIos()) {
-            double fraction = newValue / maxValue;
-            this.sendKeys(sliderElement, String.valueOf(fraction));
-        }
+        double fraction = newValue / maxValue;
+        this.sendKeys(sliderElement, String.valueOf(fraction));
     }
 
     public void setSliderValue(final MobileElement sliderElement, final double fraction) {
-        if (isIos()) {
-            this.sendKeys(sliderElement, String.valueOf(fraction));
-        }
+        this.sendKeys(sliderElement, String.valueOf(fraction));
     }
-
-
 }
 
 

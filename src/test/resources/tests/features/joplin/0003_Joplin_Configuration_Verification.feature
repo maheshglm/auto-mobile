@@ -7,9 +7,20 @@ Feature: Joplin Configuration screen tests
 
     When I navigate to Configuration screen
 
-    Then I verify Configuration "language" is set to "English (US) (100%)"
-    And I verify Configuration "dateFormat" is set to "30/01/2017"
+    When I set Configuration language to "Svenska (80%)"
+    Then I verify Configuration "language" is set to "Svenska (80%)"
+
+    When I set Configuration dateFormat to "01/30/17"
+    Then I verify Configuration "dateFormat" is set to "01/30/17"
+
     And I verify Configuration "timeFormat" is set to "20:30"
-    And I verify Configuration "maxConcurrentConnections_currentValue" is set to "5"
-    And I verify Configuration "saveGeoLocationWithNotes" is set to "ON"
-    And I verify Configuration "enableSoftBreaks" is set to "OFF"
+
+    When I set Configuration maxConcurrentConnections_setValue to "10"
+    Then I verify Configuration "maxConcurrentConnections_currentValue" is set to "10"
+
+    When I set Configuration enableSoftBreaks to "ON"
+    Then I verify Configuration "enableSoftBreaks" is set to "ON"
+
+    When I set Configuration saveGeoLocationWithNotes to "OFF"
+    Then I verify Configuration "saveGeoLocationWithNotes" is set to "OFF"
+
