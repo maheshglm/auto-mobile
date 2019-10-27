@@ -72,29 +72,37 @@ public class MobileDriverSvc {
     }
 
     private void setCapability(DesiredCapabilities capabilities, String key, String value) {
-        LOGGER.debug("Setting Desired Capability [{}] to [{}]", key, value);
         stateSvc.setStringVar(key, value);
         capabilities.setCapability(key, value);
     }
 
     private DesiredCapabilities getDesiredCapabilities() {
-
         Map<String, Object> desiredCapabilitiesMap = this.readDesiredCapabilitiesFromJson();
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
         for (Map.Entry<String, Object> entry : desiredCapabilitiesMap.entrySet()) {
             this.setCapability(capabilities, entry.getKey(), entry.getValue().toString());
         }
-
         return capabilities;
     }
+
 
     synchronized AppiumDriver driver() {
         DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
 
-        if (Strings.isNullOrEmpty(System.getProperty(AWS_EXECUTION))) {
+        String awsExecution = System.getProperty(AWS_EXECUTION);
+
+        if (Strings.isNullOrEmpty(awsExecution)) {
+            LOGGER.debug("aws.execution property is not set");
             desiredCapabilities = this.getDesiredCapabilities();
-            adbUtils.setDeviceId(stateSvc.getStringVar(UDID));
+
+            String deviceId = Strings.isNullOrEmpty(System.getProperty(DEVICE_ID))
+                    ? stateSvc.getStringVar(UDID)
+                    : System.getProperty(DEVICE_ID);
+
+            adbUtils.setDeviceId(deviceId);
+            this.setCapability(desiredCapabilities, UDID, deviceId);
+
         } else {
             adbUtils.setDeviceId(System.getProperty(AWS_DEVICE_ID));
         }

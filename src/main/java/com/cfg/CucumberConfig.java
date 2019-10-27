@@ -28,7 +28,7 @@ public class CucumberConfig {
                 "--glue",
                 "glue",
                 "--tags",
-                "@jo_test3",
+                "@test",
                 //"--dry-run",
                 "--plugin",
                 "pretty",

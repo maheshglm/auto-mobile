@@ -4,6 +4,7 @@ Feature: This feature is to test Joplin Create New Notebook functionality
   Background: Ensure app is running
     Given I have Joplin application running in device
 
+    @test
   Scenario: User should be able to create a new notebook
 
     When I create a new notebook with name "Test Notebook 1"

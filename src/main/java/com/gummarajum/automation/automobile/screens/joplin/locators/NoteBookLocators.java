@@ -129,7 +129,7 @@ public class NoteBookLocators {
     public String yearPicker = "//android.widget.TextView[contains(@resource-id,'text1')][@text='%s']";
     public String datePicker = "//android.view.View[@text='%s']";
 
-    
+
 
     //Dynamic Locators
     public String aNotebookLocator = "//android.widget.ScrollView[@index='0']//android.widget.TextView[contains(@text,'%s')]";
