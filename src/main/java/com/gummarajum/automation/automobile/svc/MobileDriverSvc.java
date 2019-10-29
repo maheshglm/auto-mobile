@@ -96,9 +96,13 @@ public class MobileDriverSvc {
             LOGGER.debug("aws.execution property is not set");
             desiredCapabilities = this.getDesiredCapabilities();
 
-            String deviceId = Strings.isNullOrEmpty(System.getProperty(DEVICE_ID))
-                    ? stateSvc.getStringVar(UDID)
-                    : System.getProperty(DEVICE_ID);
+            String deviceId;
+            if (Strings.isNullOrEmpty(System.getProperty(DEVICE_ID))) {
+                deviceId = stateSvc.getStringVar(UDID);
+            } else {
+                LOGGER.debug("Overriding UDID with System property (device.id)");
+                deviceId = System.getProperty(DEVICE_ID);
+            }
 
             adbUtils.setDeviceId(deviceId);
             this.setCapability(desiredCapabilities, UDID, deviceId);

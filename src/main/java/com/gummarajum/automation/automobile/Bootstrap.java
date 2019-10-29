@@ -1,7 +1,9 @@
 package com.gummarajum.automation.automobile;
 
 import com.cfg.Config;
+import com.cfg.CucumberConfig;
 import com.google.common.base.Strings;
+import com.gummarajum.automation.automobile.svc.MasterthoughtReportsSvc;
 import com.gummarajum.automation.automobile.svc.MobileDriverSvc;
 import com.gummarajum.automation.automobile.svc.MobileTaskSvc;
 import com.gummarajum.automation.automobile.utils.AppiumServerUtils;
@@ -39,18 +41,18 @@ public class Bootstrap {
     public static void init() {
         if (!initialized) {
             configureContainer();
-            //invokeAppiumServer(APPIUM_SERVER_ACTION.START);
             configureLogging();
             initialized = true;
             LOGGER.info("bootstrap: initialized");
         }
     }
 
-    public static final void done() {
+    public static void done() {
         if (context != null) {
             try {
+                context.getBean(MasterthoughtReportsSvc.class).generateReports(CucumberConfig.reports);
                 quitAppiumDriver();
-                //invokeAppiumServer(APPIUM_SERVER_ACTION.STOP);
+                stopAppiumServer();
                 context.close();
             } finally {
                 context = null;
@@ -91,15 +93,9 @@ public class Bootstrap {
         return logConfigLocation;
     }
 
-    public enum APPIUM_SERVER_ACTION {START, STOP}
-
-    public static void invokeAppiumServer(APPIUM_SERVER_ACTION appiumServerAction) {
+    public static void stopAppiumServer() {
         AppiumServerUtils appiumServer = context.getBean(AppiumServerUtils.class);
-        if (appiumServerAction.equals(APPIUM_SERVER_ACTION.START)) {
-            appiumServer.startServer();
-        } else {
-            appiumServer.stopServer();
-        }
+        appiumServer.stopServer();
     }
 
     public static void quitAppiumDriver() {

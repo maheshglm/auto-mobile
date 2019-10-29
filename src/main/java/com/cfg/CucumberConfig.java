@@ -7,9 +7,10 @@ import static com.constants.Properties.REPORTS_PATH;
 
 public class CucumberConfig {
 
+    public static String features = "classpath:tests/features";
+    public static String reports = "./testout/reports";
+
     public static String[] getCucumberOptions() {
-        String features = "classpath:tests/features";
-        String reports = "./testout/reports";
 
         String featuresProperty = System.getProperty(FEATURES_PATH);
         String reportsPathProperty = System.getProperty(REPORTS_PATH);

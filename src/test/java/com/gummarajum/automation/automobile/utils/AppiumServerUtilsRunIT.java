@@ -19,17 +19,17 @@ public class AppiumServerUtilsRunIT {
     private AppiumServerUtils appiumServerUtils;
 
     @BeforeClass
-    public static void beforeClass(){
+    public static void beforeClass() {
         TestConfig.configureLogging(AppiumServerUtilsRunIT.class);
     }
 
     //@Ignore
     @Test
-    public void testAppiumServer(){
+    public void testAppiumServer() {
         try {
             System.setProperty("appium.log.level", "debug");
             Assert.assertTrue(appiumServerUtils.startServer());
-        }finally {
+        } finally {
             Assert.assertTrue(appiumServerUtils.stopServer());
         }
     }

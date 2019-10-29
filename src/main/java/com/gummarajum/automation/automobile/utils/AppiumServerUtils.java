@@ -25,6 +25,9 @@ public class AppiumServerUtils {
     @Autowired
     private FileDirUtils fileDirUtils;
 
+    @Autowired
+    private ShellUtils shellUtils;
+
     private AppiumDriverLocalService service;
 
     public AppiumDriverLocalService getAppiumDriverService() {
@@ -35,15 +38,15 @@ public class AppiumServerUtils {
         return !Strings.isNullOrEmpty(System.getProperty(APPIUM_SERVER_URL));
     }
 
-    public URL getAppiumServerUrl() {
+    public synchronized URL getAppiumServerUrl() {
         URL url = null;
         try {
             if (isAppiumUrlProvided()) {
                 url = new URL(System.getProperty(APPIUM_SERVER_URL));
                 LOGGER.debug("Appium Url Reading from System property [{}] => [{}]", APPIUM_SERVER_URL, url);
             } else {
-                if(getAppiumDriverService() == null){
-                    startServer();
+                if (getAppiumDriverService() == null) {
+                    this.startServer();
                 }
                 url = getAppiumDriverService().getUrl();
                 LOGGER.debug("Appium is started locally on [{}]", url);
@@ -54,7 +57,19 @@ public class AppiumServerUtils {
         return url;
     }
 
-    public boolean startServer() {
+
+    private int getAvailablePort() {
+        int port = 4723;
+        while (true) {
+            String count = shellUtils.executeShellCommand("lsof -i -P -n | grep " + port + " | wc -l").trim();
+            if (Integer.valueOf(count) == 0) {
+                return port;
+            }
+            port++;
+        }
+    }
+
+    public synchronized boolean startServer() {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability("chromedriverExecutable",
                 fileDirUtils.getFileFromResources(CHROME_DRIVER_PATH).getAbsolutePath());
@@ -65,11 +80,10 @@ public class AppiumServerUtils {
 
         AppiumServiceBuilder builder = new AppiumServiceBuilder();
         builder.withIPAddress("127.0.0.1");
-        builder.usingPort(4723);
+        builder.usingPort(getAvailablePort());
         builder.withCapabilities(capabilities);
         builder.withArgument(GeneralServerFlag.SESSION_OVERRIDE);
         builder.withArgument(GeneralServerFlag.LOG_LEVEL, getAppiumLogLevel());
-
 
         service = AppiumDriverLocalService.buildService(builder);
         service.start();
