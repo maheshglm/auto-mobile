@@ -1,4 +1,4 @@
-@jo_test3
+@jo_test3 @jo
 Feature: Joplin Configuration screen tests
 
   Scenario: Verify Configuration Screen

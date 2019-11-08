@@ -598,13 +598,14 @@ public class MobileTaskSvc {
         return namePrefices.get(prefix);
     }
 
-    public void takeScreenshot(final String prefix) {
+    public String takeScreenshot(final String prefix) {
         File src = getDriver().getScreenshotAs(OutputType.FILE);
-        String pathname = SCREENSHOT_PATH + File.separator + prefix + "_" + this.generateScreenshotNumber(prefix) + ".png";
-        File dst = new File(System.getProperty("user.dir") + File.separator + pathname);
+        String screenshotPath = SCREENSHOT_PATH + File.separator + prefix + "_" + this.generateScreenshotNumber(prefix) + ".png";
+        File dst = new File(System.getProperty("user.dir") + File.separator + screenshotPath);
         fileDirUtils.copyFile(src, dst);
         byte[] bytes = fileDirUtils.readFileToByteArray(dst.getAbsolutePath());
         scenarioUtils.embed(bytes, "image/png");
+        return new File(screenshotPath).getName();
     }
 
     public synchronized void takeScreenshot() {

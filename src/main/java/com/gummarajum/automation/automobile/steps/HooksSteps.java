@@ -33,10 +33,10 @@ public class HooksSteps {
 
     public void tearDownProcess() {
         if (scenarioUtils.isScenarioFailed()) {
-            mobileTaskSvc.takeScreenshot("OnFailure");
-            LOGGER.error("Screenshot captured while executing failed scenario [{}]", scenarioUtils.getScenarioName());
-            LOGGER.error("Quitting Appium Driver!!!");
-            mobileTaskSvc.quitDriver();
+            String ssName = mobileTaskSvc.takeScreenshot("OnFailure");
+            LOGGER.error("Screenshot captured [{}] while executing scenario [{}]", ssName, scenarioUtils.getScenarioName());
+//            LOGGER.error("Quitting Appium Driver!!!");
+//            mobileTaskSvc.quitDriver();
         }
     }
 }

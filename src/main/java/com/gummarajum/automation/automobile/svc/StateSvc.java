@@ -3,6 +3,7 @@ package com.gummarajum.automation.automobile.svc;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -10,6 +11,9 @@ import java.util.Map;
 
 @Service
 public class StateSvc {
+
+    @Autowired
+    private StatePropertiesSvc statePropertiesSvc;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StateSvc.class);
 
@@ -35,7 +39,7 @@ public class StateSvc {
             return envStringMap.get(varName);
         }
 
-        return "";
+        return statePropertiesSvc.getGlobalPropsMap(varName);
     }
 
     public String expandExpression(final String expression) {

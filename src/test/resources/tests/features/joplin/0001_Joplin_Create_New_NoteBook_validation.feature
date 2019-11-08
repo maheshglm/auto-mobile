@@ -1,4 +1,4 @@
-@jo_test1
+@jo_test1 @jo
 Feature: This feature is to test Joplin Create New Notebook functionality
 
   Background: Ensure app is running

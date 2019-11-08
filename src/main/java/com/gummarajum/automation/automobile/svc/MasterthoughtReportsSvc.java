@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.constants.Properties.MOBILE_PLATFORM;
+
 @Service
 public class MasterthoughtReportsSvc {
 
@@ -25,16 +27,16 @@ public class MasterthoughtReportsSvc {
     @Autowired
     private StatePropertiesSvc statePropertiesSvc;
 
-    private void setDefaultProperties(){
-        Map<String,String> reportProperties = statePropertiesSvc.getGlobalPropsMapFromPrefix("cucumber.reports",false);
-        if(reportProperties.isEmpty()){
+    private void setDefaultProperties() {
+        Map<String, String> reportProperties = statePropertiesSvc.getGlobalPropsMapFromPrefix("cucumber.reports", false);
+        if (reportProperties.isEmpty()) {
             LOGGER.debug("setting default cucumber.reports properties");
-            stateSvc.setStringVar("cucumber.reports.projectName","AUTOMATION");
-            stateSvc.setStringVar("cucumber.reports.buildnumber","Default");
-            stateSvc.setStringVar("cucumber.reports.runwithjenkins","false");
-            stateSvc.setStringVar("cucumber.reports.paralleltesting","false");
-            stateSvc.setStringVar("cucumber.reports.platform","MacOSX");
-            stateSvc.setStringVar("cucumber.reports.release","1.0");
+            stateSvc.setStringVar("cucumber.reports.projectName", "AUTOMATION");
+            stateSvc.setStringVar("cucumber.reports.buildnumber", "Default");
+            stateSvc.setStringVar("cucumber.reports.runwithjenkins", "false");
+            stateSvc.setStringVar("cucumber.reports.paralleltesting", "false");
+            stateSvc.setStringVar("cucumber.reports.platform", "MacOSX");
+            stateSvc.setStringVar("cucumber.reports.release", "1.0");
         }
     }
 
@@ -46,11 +48,11 @@ public class MasterthoughtReportsSvc {
         return targetDir;
     }
 
-    private List<String> getAllJsonFilesUnderTarget(String folderLocation){
+    private List<String> getAllJsonFilesUnderTarget(String folderLocation) {
         List<String> jsonFiles = new ArrayList<>();
         File directory = new File(folderLocation);
-        File[] files = directory.listFiles((file,name) -> name.endsWith(".json"));
-        if(files != null && files.length > 0) {
+        File[] files = directory.listFiles((file, name) -> name.endsWith(".json"));
+        if (files != null && files.length > 0) {
             for (File f : files) {
                 jsonFiles.add(folderLocation + "/" + f.getName());
             }
@@ -58,7 +60,7 @@ public class MasterthoughtReportsSvc {
         return jsonFiles;
     }
 
-    private void generateReports(){
+    private void generateReports() {
         File reportOutputDirectory = new File(getTargetDir());
         List<String> jsonFiles = this.getAllJsonFilesUnderTarget(getTargetDir());
 
@@ -69,14 +71,14 @@ public class MasterthoughtReportsSvc {
 
         Configuration configuration = new Configuration(reportOutputDirectory, projectName);
         configuration.setBuildNumber(buildNumber);
-        configuration.addClassifications("Platform", stateSvc.getStringVar("cucumber.reports.platform"));
-        configuration.addClassifications("Browser", stateSvc.getStringVar("cart.browser"));
-        configuration.addClassifications("Branch", stateSvc.getStringVar("cucumber.reports.release"));
+        configuration.addClassifications("Platform", stateSvc.getStringVar(MOBILE_PLATFORM));
+        configuration.addClassifications("DeviceName", stateSvc.getStringVar("deviceName"));
+        configuration.addClassifications("DeviceId", stateSvc.getStringVar("udid"));
         ReportBuilder reportBuilder = new ReportBuilder(jsonFiles, configuration);
         reportBuilder.generateReports();
     }
 
-    public void generateReports(String targetDir){
+    public void generateReports(String targetDir) {
         setTargetDir(targetDir);
         generateReports();
     }

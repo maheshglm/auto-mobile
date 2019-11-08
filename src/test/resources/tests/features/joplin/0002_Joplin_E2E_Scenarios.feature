@@ -1,4 +1,4 @@
-@jo_test2
+@jo_test2 @jo
 Feature: Joplin E2E scenarios - Create New Note and Move
 
   Scenario: Create a Note and Move to another Notebook
